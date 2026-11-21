@@ -1,0 +1,10 @@
+    <string name="piko_newx_hide_all_sensitive_posts_title">Masquer les posts sensibles</string>
+    <string name="piko_newx_hide_all_sensitive_posts_summary">Masque les posts et citations signalés comme sensibles. Relancez X après avoir modifié ce réglage.</string>
+    <string name="piko_newx_advanced_filter_title">Filtre avancé de mots-clés</string>
+    <string name="piko_newx_advanced_filter_summary">Gérez les mots-clés locaux, les imports et les règles de correspondance.</string>
+    <string name="piko_newx_anonymous_names_title">Anonymiser les auteurs</string>
+    <string name="piko_newx_anonymous_names_summary">Affiche des pseudonymes stables pour les auteurs de publications.</string>
+    <string name="piko_newx_profile_images_title">Masquer les avatars et les bannières</string>
+    <string name="piko_newx_profile_images_summary">Remplace les avatars et les bannières par du noir.</string>
+    <string name="piko_newx_media_blur_title">Flouter les médias</string>
+    <string name="piko_newx_media_blur_summary">Floute les médias dans le détail des posts et permet de les révéler au toucher.</string>

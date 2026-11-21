@@ -1,0 +1,5 @@
+import app.morphe.extension.newx.mediablur.SessionState;
+public class SessionStateTest {
+ static int checks; static void check(boolean ok,String message){checks++;if(!ok)throw new AssertionError(message);}
+ public static void main(String[] args){SessionState a=new SessionState(),b=new SessionState();check(!a.hidden("image1"),"Starts unblurred");a.toggle();check(a.hidden("image1")&&a.hidden("video2"),"Activation applies to all IDs");a.reveal("image1");check(!a.hidden("image1")&&a.hidden("video2"),"Only selected ID revealed");check(a.hidden("recycled-new-id"),"Recycled/new media remain hidden");a.toggle();a.toggle();check(!a.hidden("image1"),"Reveal survives off/on in same screen");b.toggle();check(b.hidden("image1"),"Different screen does not inherit reveal");for(int i=0;i<10000;i++){String id="dynamic-"+i;check(a.hidden(id),"Dynamic IDs default hidden");}a.clear();a.toggle();check(a.hidden("image1"),"New session resets reveal");System.out.println("PASS "+checks+" assertions: state, distinct screens, recycling identity, 10000 dynamic IDs");}
+}

@@ -1,0 +1,7 @@
+package app.morphe.extension.newx.profileimages;
+import android.content.*;import android.os.Bundle;import android.view.*;import android.widget.*;
+import app.morphe.extension.crimera.settings.CustomScreenFragment;
+public final class ProfileImagesFragment extends CustomScreenFragment {
+ @Override public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle state){Context c=getActivity();ScrollView scroll=new ScrollView(c);LinearLayout body=new LinearLayout(c);body.setOrientation(LinearLayout.VERTICAL);int pad=(int)(16*c.getResources().getDisplayMetrics().density);body.setPadding(pad,pad,pad,pad);scroll.addView(body);TextView title=new TextView(c);title.setText("Hide Profile Pictures & Banners");title.setTextSize(22);body.addView(title);toggle(body,"Hide profile pictures","avatars",ProfileImages.enabled(true));toggle(body,"Hide profile banners","banners",ProfileImages.enabled(false));TextView info=new TextView(c);info.setText("Ferme complètement X puis rouvre-le après un changement. Les éléments déjà composés peuvent conserver leur ancien état. Les publications et leurs médias restent inchangés. Version expérimentale : consulte le protocole de validation sur appareil.");info.setPadding(0,pad,0,0);body.addView(info);return scroll;}
+ private void toggle(LinearLayout body,String label,String key,boolean value){Switch s=new Switch(body.getContext());s.setText(label);s.setChecked(value);body.addView(s);s.setOnCheckedChangeListener((v,on)->ProfileImages.set(key,on));}
+}

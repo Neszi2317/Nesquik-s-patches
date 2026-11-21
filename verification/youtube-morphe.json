@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "packageName": "com.google.android.youtube",
+  "packageVersion": "21.30.216",
+  "isMount": false,
+  "appliedPatches": [
+    "Ask flyout menu",
+    "Hide video action buttons",
+    "ZZ Ask native action button",
+    "Force native Gemini summary button (Description)"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

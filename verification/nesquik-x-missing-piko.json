@@ -1,0 +1,22 @@
+{
+  "success": false,
+  "packageName": "com.twitter.android",
+  "packageVersion": "12.43.0-prod.01",
+  "isMount": false,
+  "appliedPatches": [],
+  "failedPatches": [
+    {
+      "name": "NewX: Anonymous Names",
+      "error": "app.morphe.patcher.patch.PatchException: Nesquik X requires official Piko 3.12.0-dev.5 with NewX: Filter posts by keyword selected.\n\tat com.nesquik.patches.x.PikoIntegrationKt.registerWithPiko(PikoIntegration.kt:92)\n\tat com.nesquik.patches.x.PikoIntegrationKt.registerPikoScreen(PikoIntegration.kt:56)\n\tat com.nesquik.patches.x.PikoIntegrationKt.pikoScreen$lambda$0(PikoIntegration.kt:51)\n\tat app.morphe.patcher.patch.Patch.finalize(Patch.kt:179)\n\tat app.morphe.patcher.patch.BytecodePatch.finalize$morphe_patcher(Patch.kt:360)\n"
+    }
+  ],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": false,
+      "error": "Patch \"NewX: Anonymous Names\" failed: Nesquik X requires official Piko 3.12.0-dev.5 with NewX: Filter posts by keyword selected."
+    }
+  ],
+  "failureReason": "Patching failed: Patch \"NewX: Anonymous Names\" failed: Nesquik X requires official Piko 3.12.0-dev.5 with NewX: Filter posts by keyword selected.",
+  "failureDetail": "app.morphe.patcher.patch.PatchException: Nesquik X requires official Piko 3.12.0-dev.5 with NewX: Filter posts by keyword selected.\n\tat com.nesquik.patches.x.PikoIntegrationKt.registerWithPiko(PikoIntegration.kt:92)\n\tat com.nesquik.patches.x.PikoIntegrationKt.registerPikoScreen(PikoIntegration.kt:56)\n\tat com.nesquik.patches.x.PikoIntegrationKt.pikoScreen$lambda$0(PikoIntegration.kt:51)\n\tat app.morphe.patcher.patch.Patch.finalize(Patch.kt:179)\n\tat app.morphe.patcher.patch.BytecodePatch.finalize$morphe_patcher(Patch.kt:360)\n"
+}

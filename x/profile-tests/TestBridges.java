@@ -1,0 +1,3 @@
+import java.nio.file.*;import org.jetbrains.org.objectweb.asm.*;
+/** Only modelUrl (generated at patch time) is replaced. The complete Java runtime is tested as compiled. */
+public class TestBridges {public static void main(String[] a)throws Exception{ClassWriter w=new ClassWriter(0);new ClassReader(Files.readAllBytes(Path.of(a[0]))).accept(new ClassVisitor(Opcodes.ASM9,w){public MethodVisitor visitMethod(int ac,String n,String d,String s,String[] e){MethodVisitor m=super.visitMethod(ac,n,d,s,e);if(n.equals("modelUrl")){m.visitCode();m.visitInsn(Opcodes.ACONST_NULL);m.visitInsn(Opcodes.ARETURN);m.visitMaxs(1,1);m.visitEnd();return null;}return m;}},0);Path out=Path.of(a[1]);Files.createDirectories(out.getParent());Files.write(out,w.toByteArray());}}

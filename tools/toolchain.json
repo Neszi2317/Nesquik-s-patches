@@ -1,0 +1,46 @@
+{
+  "piko.mpp": {
+    "url": "https://github.com/crimera/piko/releases/download/v3.12.0-dev.5/patches-3.12.0-dev.5.mpp",
+    "sha256": "ea8e3601583b557c2c57a4b42b4333087a4735e2651e070e72a30c713a10cb85"
+  },
+  "morphe.jar": {
+    "url": "https://github.com/MorpheApp/morphe-desktop/releases/download/v2.3.0/morphe-desktop-2.3.0-all.jar",
+    "sha256": "e0e49525e1fbe1108d6cfd7398d39e0cd489c58a753e63653c1e8f11a0099757"
+  },
+  "r8.jar": {
+    "url": "https://dl.google.com/android/maven2/com/android/tools/r8/9.5.26/r8-9.5.26.jar",
+    "sha256": "3502f087388ce95bbf5254555927f09385dc2636873964d0bd53f3eaf4fb49ad"
+  },
+  "android.jar": {
+    "url": "https://raw.githubusercontent.com/Sable/android-platforms/master/android-35/android.jar",
+    "sha256": "4566663c3876e022b4fa4ced8c8697c4ab1688267f090114fd92d027b32e619b"
+  },
+  "kotlin-reflect.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-reflect/1.6.10/kotlin-reflect-1.6.10.jar",
+    "sha256": "3277ac102ae17aad10a55abec75ff5696c8d109790396434b496e75087854203"
+  },
+  "kotlin-coroutines.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0.jar",
+    "sha256": "9860906a1937490bf5f3b06d2f0e10ef451e65b95b269f22daf68a3d1f5065c5"
+  },
+  "annotations.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/26.0.2/annotations-26.0.2.jar",
+    "sha256": "2037be378980d3ba9333e97955f3b2cde392aa124d04ca73ce2eee6657199297"
+  },
+  "json.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/json/json/20250517/json-20250517.jar",
+    "sha256": "3ea61b2a06e31edf1c91134fe9106b0ebb16628be169f3db75bc7a2b06b45796"
+  },
+  "kotlin-compiler-embeddable-2.4.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.4.0/kotlin-compiler-embeddable-2.4.0.jar",
+    "sha256": "c2b25e8c1c93ec416ba4327f5e31eaec0f0c8847241b9353e294b8db9dce564f"
+  },
+  "kotlin-stdlib-2.4.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.4.0/kotlin-stdlib-2.4.0.jar",
+    "sha256": "ccb14ff83fabcb11458b798dbc9824748ccdffeec79c9aba789e6ed1cda86b1c"
+  },
+  "kotlin-script-runtime-2.4.jar": {
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-script-runtime/2.4.0/kotlin-script-runtime-2.4.0.jar",
+    "sha256": "196e8ecbf63daf477e34e67c2f871ee232ae7bf8b377432d876d1bbf9d273de3"
+  }
+}

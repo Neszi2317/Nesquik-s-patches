@@ -1,0 +1,1 @@
+package android.content.res;import android.os.LocaleList;public class Configuration {public int uiMode=32,orientation=1,screenWidthDp=400,densityDpi=480;public LocaleList getLocales(){return new LocaleList();}}

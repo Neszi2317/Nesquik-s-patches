@@ -1,0 +1,68 @@
+name: Release Morphe bundle
+on:
+  push:
+    paths:
+      - bundles/Nesquiks-patches-0.1.0.mpp
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic version, e.g. 0.1.0'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build and catalog the patches
+        env:
+          VERSION: ${{ inputs.version || '0.1.0' }}
+        run: |
+          python3 tools/fetch-toolchain.py .toolchain
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            mkdir -p dist
+            cp bundles/Nesquiks-patches-0.1.0.mpp "dist/Nesquiks-patches-$VERSION.mpp"
+          else
+            tools/build-collection.sh "$VERSION" .toolchain
+          fi
+          java -jar .toolchain/morphe.jar list-patches --with-packages --with-versions \
+            --patches "dist/Nesquiks-patches-$VERSION.mpp" > "dist/patches-list-$VERSION.txt"
+          (cd dist && sha256sum "Nesquiks-patches-$VERSION.mpp" > "SHA256SUMS-$VERSION.txt")
+      - name: Create release and update Morphe metadata
+        env:
+          VERSION: ${{ inputs.version || '0.1.0' }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset="Nesquiks-patches-$VERSION.mpp"
+          gh release create "v$VERSION" \
+            "dist/$asset" "dist/patches-list-$VERSION.txt" "dist/SHA256SUMS-$VERSION.txt" \
+            --title "Nesquik's patches $VERSION" --generate-notes --target "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          version = os.environ["VERSION"]
+          repo = os.environ["GITHUB_REPOSITORY"]
+          name = f"Nesquiks-patches-{version}.mpp"
+          metadata = {
+              "version": version,
+              "download_url": f"https://github.com/{repo}/releases/download/v{version}/{name}",
+              "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "description": "Nesquik's patches for X, Reddit and YouTube.",
+          }
+          Path("patches-bundle.json").write_text(json.dumps(metadata, indent=2) + "\n")
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add patches-bundle.json
+          git commit -m "Update Morphe source to $VERSION"
+          git push

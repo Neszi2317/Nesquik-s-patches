@@ -1,0 +1,2 @@
+import app.nesquikos.playlist.*;import org.json.*;import java.nio.file.*;
+public class PageProbe {public static void main(String[] a)throws Exception{PlaylistIndex.Page p=PlaylistIndex.parse(new JSONObject(new String(Files.readAllBytes(Paths.get(a[0])),"UTF-8")),a[1],Boolean.parseBoolean(a[2]),a[3]);System.out.println(new JSONObject().put("count",p.videos.size()).put("matches",PlaylistIndex.filter(p.videos,"BlankTV").size()).put("next",p.next).put("target",p.target));}}

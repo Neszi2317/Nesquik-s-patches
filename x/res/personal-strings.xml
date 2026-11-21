@@ -1,0 +1,10 @@
+    <string name="piko_newx_hide_all_sensitive_posts_title">Hide all sensitive posts</string>
+    <string name="piko_newx_hide_all_sensitive_posts_summary">Remove sensitive posts and quotes, including adult, violent and other flagged media. Takes priority over Show sensitive media. Restart after changing.</string>
+    <string name="piko_newx_advanced_filter_title">Advanced Global Keyword Filter</string>
+    <string name="piko_newx_advanced_filter_summary">Manage local keywords, imports, matching and propagation</string>
+    <string name="piko_newx_anonymous_names_title">Anonymous Names</string>
+    <string name="piko_newx_anonymous_names_summary">Pseudonymes stables pour les auteurs de publications</string>
+    <string name="piko_newx_profile_images_title">Hide Profile Pictures &amp; Banners</string>
+    <string name="piko_newx_profile_images_summary">Local black avatars and profile banners</string>
+    <string name="piko_newx_media_blur_title">In-App Media Blur</string>
+    <string name="piko_newx_media_blur_summary">Blur media in post details and reveal each media by tapping.</string>
