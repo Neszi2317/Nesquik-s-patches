@@ -1,12 +1,12 @@
 # Nesquik's patches
 
-Collection personnelle de 18 entrées de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox** et **Discord**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
+Collection personnelle de 19 entrées de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox** et **Discord**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
 
 ## Compatibilité
 
 | Application | Patchs | Versions déclarées |
 | --- | --- | --- |
-| X | Filtre avancé de mots-clés, masquage des posts sensibles, avatars et bannières, Anonymous Names, flou des médias | 12.43.0-prod.01 |
+| X | Filtre avancé de mots-clés, masquage des posts sensibles, avatars et bannières, Anonymous Names, flou des médias, masquage permanent par identifiant | 12.43.0-prod.01 |
 | Reddit | Filtre local de mots-clés, masquage NSFW, accueil personnalisé | 2026.47.0 |
 | YouTube | Ask Native Action Bar 0.8.2 | 21.20.405, 21.30.216, 21.42.241, 21.44.528 |
 | YouTube | Bouton Gemini dans la description, expérimental | 21.30.216 |
@@ -20,7 +20,7 @@ La version expérimentale de Gemini dans la description restaure un bouton déj�
 
 ## Patch X indépendant
 
-[Permanently Hide Posts 0.1.0](Piko-NewX/Permanently-Hide-Posts/) ajoute « Masquer définitivement ce post » au menu ⋮ de X 12.43.0-prod.01. Importe son MPP avec Piko pour gérer une liste locale exportable et continuer à utiliser le bundle personnel 0.2.0.
+[Permanently Hide Posts 0.1.0](Piko-NewX/Permanently-Hide-Posts/) ajoute « Masquer définitivement ce post » au menu ⋮ de X 12.43.0-prod.01. Il est inclus dans la source distante Nesquik’s patches dès la version 0.3.0. Actualise la source dans Morphe, puis coche **NewX: Permanently Hide Posts** avec les composants Piko **Browse tweet object** et **Filter posts by keyword**. Si tu utilisais le MPP local, désactive sa source séparée avant de repatcher.
 
 ## Importer dans Morphe
 
@@ -32,7 +32,7 @@ Dans **Sources → + → Remote**, ajouter [l’URL du catalogue](https://raw.gi
 - **Firefox**. Configure la liste des sites à bloquer dans les options de **Firefox - Local Website Blocker** avant de lancer le patching.
 - **Discord**. Ajoute la source officielle [Venus Patches](https://github.com/VenusIsJaded/Venus-Patches) et sélectionne **Venus settings** avec **! Hide blocked or ignored users**. La combinaison a été testée avec Venus **1.21.1**.
 
-Les cinq patchs X sont sélectionnables individuellement. Leur code JVM est chargé par la source Nesquik. Cette source ajoute ses entrées au registre de l'APK généré par Piko et réutilise son mécanisme de filtrage. La version de Piko indiquée est celle vérifiée pour ce portage.
+Les six patchs X sont sélectionnables individuellement. Leur code JVM est chargé par la source Nesquik. Cette source ajoute ses entrées au registre de l'APK généré par Piko et réutilise son mécanisme de filtrage. La version de Piko indiquée est celle vérifiée pour ce portage.
 
 ## Développement et publication
 
@@ -50,7 +50,7 @@ Avec Java 21 et Python 3.11+ :
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-tools/build-collection.sh 0.2.0 .toolchain
+tools/build-collection.sh 0.3.0 .toolchain
 ```
 
 Le workflow GitHub **Release Morphe bundle** publie le MPP et actualise `patches-bundle.json` quand un nouveau bundle versionné est ajouté dans `bundles/`. Le lancement manuel reconstruit le bundle pour la version demandée.

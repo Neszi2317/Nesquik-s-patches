@@ -2,7 +2,11 @@
 
 Le menu ⋮ d’un post reçoit l’action **Masquer définitivement ce post**. Le patch mémorise son identifiant sur l’appareil. Dans les listes URT prises en charge, il retire la ligne et conserve les autres publications de l’auteur. Lorsqu’une citation ou un repost contient une référence à un identifiant masqué, il retire la ligne qui le contient.
 
-## Installation
+## Installation depuis le catalogue
+
+Dans Morphe, actualise la source distante Nesquik’s patches jusqu’à la version 0.3.0 ou ultérieure. Sélectionne le nouveau patch et les deux composants Piko indiqués ci-dessous, puis repatche X. Si tu utilises le catalogue, désactive toute copie locale du même patch.
+
+## Installation du MPP indépendant
 
 1. Dans Morphe, ajoute [Permanently-Hide-Posts-0.1.0.mpp](Permanently-Hide-Posts-0.1.0.mpp) comme source locale. Utilise le mode d’installation standard et l’APKM original **com.twitter.android 12.43.0-prod.01**, versionCode **312430001**.
 2. Ajoute la source **Piko 3.12.0-dev.5** et coche **NewX: Browse tweet object** et **NewX: Filter posts by keyword**. Ils fournissent les points d’intégration du menu et des listes. Tu peux laisser vide la liste de mots-clés officielle. Si l’entrée de débogage « Browse Tweet Object » te gêne, tu peux la désactiver dans les réglages Piko après installation.
