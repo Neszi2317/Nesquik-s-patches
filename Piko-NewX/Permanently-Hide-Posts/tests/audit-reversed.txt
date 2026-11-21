@@ -1,0 +1,26 @@
+APK signature verified
+146912 unique DEX classes including Settings
+Lapp/morphe/extension/newx/hidesensitive/SensitivePostFilter; = 1
+Lapp/morphe/extension/newx/postfilter/AdvancedFilter; = 1
+Lfr/nesquik/hidden/Menu;->add = 1
+Lfr/nesquik/hidden/Menu;->handle = 1
+Lfr/nesquik/hidden/Menu;->icon = 1
+Lfr/nesquik/hidden/Menu;->label = 1
+Lfr/nesquik/hidden/Projection;->render = 19
+native menu addOption = 1
+native menu handleOptionAction = 1
+native menu labelFor = 1
+native menu usesIcon = 1
+private menu token initialized = 1
+settings registry = 1
+UI list hooks present
+Extension menu hook add
+Extension menu hook handle
+Extension menu hook icon
+Extension menu hook label
+Native dispatch addOption
+Native dispatch handleOptionAction
+Native dispatch labelFor
+Native dispatch usesIcon
+Settings and menu token linked
+Personal keyword and sensitive filters linked

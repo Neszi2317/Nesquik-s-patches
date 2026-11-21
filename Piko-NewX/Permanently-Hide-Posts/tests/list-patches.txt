@@ -1,0 +1,8 @@
+Index: 0
+Name: NewX: Permanently Hide Posts
+Description: Masque individuellement les posts depuis leur menu. Nécessite les composants Piko Browse tweet object et Filter posts by keyword.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
