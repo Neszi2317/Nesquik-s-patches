@@ -1,0 +1,22 @@
+{
+  "success": false,
+  "packageName": "com.twitter.android",
+  "packageVersion": "12.43.0-prod.01",
+  "isMount": false,
+  "appliedPatches": [],
+  "failedPatches": [
+    {
+      "name": "NewX: Permanently Hide Posts",
+      "error": "app.morphe.patcher.patch.PatchException: Select Piko 3.12.0-dev.5: Browse tweet object and Filter posts by keyword.\n\tat fr.nesquik.patches.hidden.HiddenKt.permanentlyHidePosts$lambda$0$1(Hidden.kt:47)\n\tat app.morphe.patcher.patch.Patch.finalize(Patch.kt:179)\n\tat app.morphe.patcher.patch.BytecodePatch.finalize$morphe_patcher(Patch.kt:360)\n"
+    }
+  ],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": false,
+      "error": "Patch \"NewX: Permanently Hide Posts\" failed: Select Piko 3.12.0-dev.5: Browse tweet object and Filter posts by keyword."
+    }
+  ],
+  "failureReason": "Patching failed: Patch \"NewX: Permanently Hide Posts\" failed: Select Piko 3.12.0-dev.5: Browse tweet object and Filter posts by keyword.",
+  "failureDetail": "app.morphe.patcher.patch.PatchException: Select Piko 3.12.0-dev.5: Browse tweet object and Filter posts by keyword.\n\tat fr.nesquik.patches.hidden.HiddenKt.permanentlyHidePosts$lambda$0$1(Hidden.kt:47)\n\tat app.morphe.patcher.patch.Patch.finalize(Patch.kt:179)\n\tat app.morphe.patcher.patch.BytecodePatch.finalize$morphe_patcher(Patch.kt:360)\n"
+}

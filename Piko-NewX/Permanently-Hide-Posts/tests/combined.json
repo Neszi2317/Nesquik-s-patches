@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "packageName": "com.twitter.android",
+  "packageVersion": "12.43.0-prod.01",
+  "isMount": false,
+  "appliedPatches": [
+    "NewX: Browse tweet object",
+    "NewX: Filter posts by keyword",
+    "NewX: Permanently Hide Posts",
+    "NewX: In-App Media Blur",
+    "NewX: Hide all sensitive posts",
+    "NewX: Hide Profile Pictures & Banners",
+    "NewX: Anonymous Names",
+    "NewX: Advanced Global Keyword Filter"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

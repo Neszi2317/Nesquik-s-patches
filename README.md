@@ -18,6 +18,10 @@ Collection personnelle de 18 entrées de patchs Morphe pour **X**, **Reddit**, *
 
 La version expérimentale de Gemini dans la description restaure un bouton déjà reçu par YouTube pour la même vidéo et la même configuration d'écran. Voir les limites dans [la documentation du patch](youtube/native-ask/description/README_FR.md).
 
+## Patch X indépendant
+
+[Permanently Hide Posts 0.1.0](Piko-NewX/Permanently-Hide-Posts/) ajoute « Masquer définitivement ce post » au menu ⋮ de X 12.43.0-prod.01. Importe son MPP avec Piko pour gérer une liste locale exportable et continuer à utiliser le bundle personnel 0.2.0.
+
 ## Importer dans Morphe
 
 Dans **Sources → + → Remote**, ajouter [l’URL du catalogue](https://raw.githubusercontent.com/Neszi2317/Nesquik-s-patches/refs/heads/main/patches-bundle.json). Tu peux aussi [télécharger le MPP depuis la dernière release](https://github.com/Neszi2317/Nesquik-s-patches/releases/latest) et l’ajouter depuis ton appareil.
