@@ -56,7 +56,7 @@ jobs:
           metadata = {
               "version": version,
               "download_url": f"https://github.com/{repo}/releases/download/v{version}/{name}",
-              "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
               "description": "Nesquik's patches for X, Reddit and YouTube.",
           }
           Path("patches-bundle.json").write_text(json.dumps(metadata, indent=2) + "\n")
