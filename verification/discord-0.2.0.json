@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "packageName": "com.discord",
+  "packageVersion": "351.11 - Stable",
+  "isMount": false,
+  "appliedPatches": [
+    "Venus settings",
+    "! Hide blocked or ignored users"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

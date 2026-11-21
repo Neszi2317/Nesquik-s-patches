@@ -1,0 +1,7 @@
+Universal Auto-Translated Captions 0.4.0
+Based on the user-supplied Universal native caption translations 0.3.0.
+Original manifest attribution: Independent prototype.
+Original declared license: GPL-3.0-only.
+Kotlin source reconstructed from compiled JVM/DEX classes.
+0.4.0 change: merge the existing fallback catalogue after a non-empty server list.
+The APK, YouTube application and build-tool binaries are not part of this source release.

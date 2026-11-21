@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Name: Universal native caption translations
+Description: Completes partial native caption translation lists
+Version: 0.4.0
+Patcher-Version: 1.15.0
+Author: Independent community patch
+License: GPL-3.0-only
+

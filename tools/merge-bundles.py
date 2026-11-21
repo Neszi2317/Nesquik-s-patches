@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge the independently versioned X, Reddit and YouTube modules for Morphe."""
+"""Merge independently versioned patch modules for Morphe."""
 import argparse
 from pathlib import Path
 import re
@@ -20,8 +20,8 @@ if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:[-.][a-zA-Z0-9.]+)?", args.versio
 
 manifest = [
     "Manifest-Version: 1.0", "Name: Nesquik's patches", f"Version: {args.version}",
-    "Description: Personal patches for X, Reddit and YouTube",
-    "Patcher-Version: 2.4.0", "Author: Nesquik", "License: GPL-3.0", "", ""
+    "Description: Personal patches for X, Reddit, YouTube, Firefox and Discord",
+    "Patcher-Version: 2.4.0", "Author: Nesquik", "License: See component licenses", "", ""
 ]
 
 with TemporaryDirectory() as directory:
@@ -33,7 +33,7 @@ with TemporaryDirectory() as directory:
                 raise ValueError(f"Missing JVM patch classes in {path}")
             for item in module.infolist():
                 name = item.filename
-                if item.is_dir() or name == "META-INF/MANIFEST.MF":
+                if item.is_dir():
                     continue
                 if re.fullmatch(r"META-INF/[^/]+\.(SF|RSA|DSA|EC)", name, re.I):
                     continue
@@ -42,8 +42,8 @@ with TemporaryDirectory() as directory:
                     continue
                 if name.startswith("META-INF/") and name.endswith(".kotlin_module"):
                     name = f"META-INF/{path.stem}-{Path(name).name}"
-                if name in {"LICENSE", "NOTICE"}:
-                    name = f"META-INF/notices/{path.stem}/{name}"
+                if name in {"LICENSE", "NOTICE", "META-INF/MANIFEST.MF"}:
+                    name = f"META-INF/notices/{path.stem}/{Path(name).name}"
                 if name in entries:
                     raise ValueError(f"Duplicate archive entry {name} from {path}")
                 entries[name] = data

@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "packageName": "org.mozilla.firefox",
+  "packageVersion": "159.0",
+  "isMount": false,
+  "appliedPatches": [
+    "Firefox - Local Website Blocker"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

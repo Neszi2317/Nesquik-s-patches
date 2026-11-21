@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "packageName": "com.google.android.youtube",
+  "packageVersion": "21.46.522",
+  "isMount": false,
+  "appliedPatches": [
+    "Rounded YouTube Captions (21.46.522)",
+    "Universal auto-translated captions"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

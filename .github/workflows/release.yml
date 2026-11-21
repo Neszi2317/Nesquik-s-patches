@@ -2,7 +2,7 @@ name: Release Morphe bundle
 on:
   push:
     paths:
-      - bundles/Nesquiks-patches-0.1.0.mpp
+      - bundles/Nesquiks-patches-*.mpp
   workflow_dispatch:
     inputs:
       version:
@@ -19,18 +19,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Resolve release version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          version="$REQUESTED_VERSION"
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            mapfile -t bundles < <(git diff --diff-filter=A --name-only "$BEFORE" "$GITHUB_SHA" -- 'bundles/Nesquiks-patches-*.mpp')
+            if [[ ${#bundles[@]} != 1 || ! ${bundles[0]} =~ ^bundles/Nesquiks-patches-([0-9]+\.[0-9]+\.[0-9]+)\.mpp$ ]]; then
+              echo "A release push must add exactly one versioned Morphe bundle." >&2
+              exit 1
+            fi
+            version="${BASH_REMATCH[1]}"
+          fi
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "VERSION=$version" >> "$GITHUB_ENV"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
       - name: Build and catalog the patches
-        env:
-          VERSION: ${{ inputs.version || '0.1.0' }}
         run: |
           python3 tools/fetch-toolchain.py .toolchain
           if [[ "$GITHUB_EVENT_NAME" == push ]]; then
             mkdir -p dist
-            cp bundles/Nesquiks-patches-0.1.0.mpp "dist/Nesquiks-patches-$VERSION.mpp"
+            cp "bundles/Nesquiks-patches-$VERSION.mpp" "dist/Nesquiks-patches-$VERSION.mpp"
           else
             tools/build-collection.sh "$VERSION" .toolchain
           fi
@@ -39,7 +55,6 @@ jobs:
           (cd dist && sha256sum "Nesquiks-patches-$VERSION.mpp" > "SHA256SUMS-$VERSION.txt")
       - name: Create release and update Morphe metadata
         env:
-          VERSION: ${{ inputs.version || '0.1.0' }}
           GH_TOKEN: ${{ github.token }}
         run: |
           asset="Nesquiks-patches-$VERSION.mpp"
@@ -57,7 +72,7 @@ jobs:
               "version": version,
               "download_url": f"https://github.com/{repo}/releases/download/v{version}/{name}",
               "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-              "description": "Nesquik's patches for X, Reddit and YouTube.",
+              "description": "Nesquik's patches for X, Reddit, YouTube, Firefox and Discord.",
           }
           Path("patches-bundle.json").write_text(json.dumps(metadata, indent=2) + "\n")
           PY
