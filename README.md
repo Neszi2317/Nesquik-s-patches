@@ -13,7 +13,7 @@ Collection personnelle de 19 entrées de patchs Morphe pour **X**, **Reddit**, *
 | YouTube | Recherche dans les playlists, expérimentale | 21.16.256 |
 | YouTube | [Traduction automatique des sous-titres 0.4.0](youtube/auto-translated-captions/) | 21.16.256 et 21.46.522 testées par patching |
 | YouTube | [Sous-titres arrondis](https://github.com/Neszi2317/Rounded-Subtiles/tree/v1.0.0-dev.6) | 21.20.405, 21.44.528, 21.45.82, 21.46.522 |
-| Firefox | [Blocage local de sites](firefox/) | 159.0 |
+| Firefox | [Blocage local de sites 0.1.3](firefox/) | 159.0, 160.0, 160.0.1 |
 | Discord | [Masquage des utilisateurs bloqués ou ignorés](discord/) | 351.11 - Stable |
 
 La version expérimentale de Gemini dans la description restaure un bouton déjà reçu par YouTube pour la même vidéo et la même configuration d'écran. Voir les limites dans [la documentation du patch](youtube/native-ask/description/README_FR.md).
@@ -29,7 +29,7 @@ Dans **Sources → + → Remote**, ajouter [l’URL du catalogue](https://raw.gi
 - **X**. Ajoute la source officielle **Piko 3.12.0-dev.5** et le bundle **Nesquik's patches**. Dans le même patching, sélectionne le patch officiel **NewX: Filter posts by keyword**, puis les patchs Nesquik souhaités. Leurs réglages apparaissent sous **Piko → Contenu** sur l'APK généré. Tu peux laisser la liste officielle vide et remplir le filtre avancé. Pour reproduire la configuration testée, laisse **NewX: Show sensitive media** décoché.
 - **Reddit**. Garde la source officielle Morphe et sélectionne au moins un patch qui installe ses réglages, par exemple **Hide navigation buttons**, avec les patchs personnalisés. La compilation de référence utilise Morphe Patches **2.4.0-dev.6**.
 - **YouTube**. Sur **21.30.216**, les deux patchs Ask/Gemini ont été appliqués avec **Ask flyout menu** et **Hide video action buttons** de Morphe Patches **2.1.0-dev.8**. Sur **21.46.522**, la traduction et la variante correspondante des sous-titres arrondis ont été appliquées ensemble.
-- **Firefox**. Configure la liste des sites à bloquer dans les options de **Firefox - Local Website Blocker** avant de lancer le patching.
+- **Firefox**. Configure la liste des sites à bloquer dans les options de **Firefox - Local Website Blocker** avant de lancer le patching. Sur Firefox 160.0.1, utilise la préversion Heval 3.1.0-dev.1 pour combiner les deux sources.
 - **Discord**. Ajoute la source officielle [Venus Patches](https://github.com/VenusIsJaded/Venus-Patches) et sélectionne **Venus settings** avec **! Hide blocked or ignored users**. La combinaison a été testée avec Venus **1.21.1**.
 
 Les six patchs X sont sélectionnables individuellement. Leur code JVM est chargé par la source Nesquik. Cette source ajoute ses entrées au registre de l'APK généré par Piko et réutilise son mécanisme de filtrage. La version de Piko indiquée est celle vérifiée pour ce portage.
@@ -50,7 +50,7 @@ Avec Java 21 et Python 3.11+ :
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-tools/build-collection.sh 0.3.0 .toolchain
+tools/build-collection.sh 0.4.0 .toolchain
 ```
 
 Le workflow GitHub **Release Morphe bundle** publie le MPP et actualise `patches-bundle.json` quand un nouveau bundle versionné est ajouté dans `bundles/`. Le lancement manuel reconstruit le bundle pour la version demandée.

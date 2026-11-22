@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Name: Firefox Local Website Blocker
+Description: Local HTTP(S) domain and URL path rules set in Morphe
+Version: 0.1.3
+Author: Local custom patches
+License: MPL-2.0
+Patcher-Version: 2.4.0
+
