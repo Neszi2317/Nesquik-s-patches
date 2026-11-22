@@ -19,6 +19,8 @@ L’archive `omni.ja` reste lisible et intègre. Le patch change uniquement l’
 
 Le module extrait de l’APK combiné a aussi été chargé dans Firefox Desktop 160.0.1. Un serveur HTTP de test a confirmé le rejet des six navigations interdites et le chargement des cinq navigations autorisées, dont un sous-domaine, une règle de la forme `https://domaine/`, un chemin, un subreddit et une redirection. Les scénarios autorisés incluaient un chemin au préfixe similaire, un subreddit au nom similaire et une redirection vers une page autorisée. Deux requêtes HTTPS ont aussi été vérifiées, une autorisée et une bloquée.
 
+Le lancement sur Android reste à confirmer. Sur les émulateurs Android 15 et Android 9, les commandes d’installation se sont bloquées côté gestionnaire de paquets.
+
 ## Empreintes SHA-256 des fichiers testés
 
 | Fichier | SHA-256 |
