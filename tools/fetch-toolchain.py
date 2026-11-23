@@ -12,6 +12,13 @@ target = Path(sys.argv[1] if len(sys.argv) > 1 else ".toolchain")
 target.mkdir(parents=True, exist_ok=True)
 sources = json.loads(Path(__file__).with_name("toolchain.json").read_text())
 
+requested = sys.argv[2:]
+if requested:
+    unknown = [name for name in requested if name not in sources]
+    if unknown:
+        raise SystemExit(f"Unknown toolchain files: {', '.join(unknown)}")
+    sources = {name: sources[name] for name in requested}
+
 def sha256(path):
     with path.open("rb") as content:
         return hashlib.file_digest(content, "sha256").hexdigest()

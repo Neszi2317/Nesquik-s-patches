@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - bundles/Nesquiks-patches-*.mpp
+      - .github/workflows/release.yml
   workflow_dispatch:
     inputs:
       version:
@@ -29,31 +30,45 @@ jobs:
           version="$REQUESTED_VERSION"
           if [[ "$GITHUB_EVENT_NAME" == push ]]; then
             mapfile -t bundles < <(git diff --diff-filter=A --name-only "$BEFORE" "$GITHUB_SHA" -- 'bundles/Nesquiks-patches-*.mpp')
-            if [[ ${#bundles[@]} != 1 || ! ${bundles[0]} =~ ^bundles/Nesquiks-patches-([0-9]+\.[0-9]+\.[0-9]+)\.mpp$ ]]; then
+            if [[ ${#bundles[@]} == 0 ]]; then
+              # A workflow-only push can retry publication of a bundle already on main.
+              version=$(git ls-files 'bundles/Nesquiks-patches-*.mpp' |
+                sed -nE 's|^bundles/Nesquiks-patches-([0-9]+\.[0-9]+\.[0-9]+)\.mpp$|\1|p' |
+                sort -V | tail -1)
+              current=$(python3 -c 'import json; print(json.load(open("patches-bundle.json"))["version"])')
+              if [[ -z "$version" || "$version" == "$current" ]]; then
+                exit 0
+              fi
+            elif [[ ${#bundles[@]} == 1 && ${bundles[0]} =~ ^bundles/Nesquiks-patches-([0-9]+\.[0-9]+\.[0-9]+)\.mpp$ ]]; then
+              version="${BASH_REMATCH[1]}"
+            else
               echo "A release push must add exactly one versioned Morphe bundle." >&2
               exit 1
             fi
-            version="${BASH_REMATCH[1]}"
           fi
           [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
           echo "VERSION=$version" >> "$GITHUB_ENV"
       - uses: actions/setup-java@v4
+        if: env.VERSION != ''
         with:
           distribution: temurin
           java-version: '21'
       - name: Build and catalog the patches
+        if: env.VERSION != ''
         run: |
-          python3 tools/fetch-toolchain.py .toolchain
-          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+          if [[ -f "bundles/Nesquiks-patches-$VERSION.mpp" ]]; then
+            python3 tools/fetch-toolchain.py .toolchain morphe.jar
             mkdir -p dist
             cp "bundles/Nesquiks-patches-$VERSION.mpp" "dist/Nesquiks-patches-$VERSION.mpp"
           else
+            python3 tools/fetch-toolchain.py .toolchain
             tools/build-collection.sh "$VERSION" .toolchain
           fi
           java -jar .toolchain/morphe.jar list-patches --with-packages --with-versions \
             --patches "dist/Nesquiks-patches-$VERSION.mpp" > "dist/patches-list-$VERSION.txt"
           (cd dist && sha256sum "Nesquiks-patches-$VERSION.mpp" > "SHA256SUMS-$VERSION.txt")
       - name: Create release and update Morphe metadata
+        if: env.VERSION != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
