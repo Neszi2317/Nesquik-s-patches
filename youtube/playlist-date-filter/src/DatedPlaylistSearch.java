@@ -8,9 +8,11 @@ package app.morphe.extension.youtube.patches.utils.requests;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.requests.Route;
 import app.morphe.extension.youtube.patches.utils.requests.ChannelSearchRequest.ChannelSearchResult;
 import fr.nesquik.playlistdate.DateRange;
 import fr.nesquik.playlistdate.PublicationDates;
+import fr.nesquik.playlistdate.WatchLaterDates;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +21,22 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public final class DatedPlaylistSearch {
     public enum State { LOADING, COMPLETE, PARTIAL, FAILED }
+
+    private static final String ENTRY_FIELDS =
+            "contents.playlistVideoRenderer(videoId,setVideoId,title,thumbnail,lengthText,shortBylineText.runs.text,videoInfo)"
+                    + ",continuations";
+    private static final String ENTRY_LIST = "playlistVideoListRenderer(" + ENTRY_FIELDS + ")";
+    private static final Route.CompiledRoute BROWSE_WATCH_LATER_ENTRIES = new Route(Route.Method.POST,
+            "browse?fields=header.pageHeaderRenderer.pageTitle"
+                    + ",contents.singleColumnBrowseResultsRenderer.tabs.tabRenderer.content.sectionListRenderer"
+                    + ".contents(" + ENTRY_LIST + ",itemSectionRenderer.contents." + ENTRY_LIST + ")"
+                    + ",continuationContents.playlistVideoListContinuation(" + ENTRY_FIELDS + ")&prettyPrint=false").compile();
 
     public static final class Results {
         public final String title;
@@ -49,22 +62,27 @@ public final class DatedPlaylistSearch {
     private static final class Video {
         final ChannelSearchResult result;
         final String text;
+        final String entryId;
 
-        Video(ChannelSearchResult result, String text) {
+        Video(ChannelSearchResult result, String text, String entryId) {
             this.result = result;
             this.text = text;
+            this.entryId = entryId;
         }
     }
 
     private DatedPlaylistSearch() {}
 
     public static void fetch(String id, String query, DateRange range, Map<String, String> headers,
-                             BooleanSupplier cancelled, Consumer<Results> onResults) {
+                             BooleanSupplier cancelled, Consumer<Results> onResults,
+                             Supplier<Map<String, LocalDate>> additionDates) {
         Utils.runOnBackgroundThread(() -> {
             Scan scan = new Scan(query, range, cancelled, onResults);
             try {
-                var outcome = GetPlaylistItemsRequest.fetchPages(
-                        PlaylistRoutes.BROWSE_PLAYLIST_SEARCH_VIDEOS, id, headers, scan::page);
+                if (additionDates != null) scan.additionDates = additionDates.get();
+                var route = scan.additionDates == null ? PlaylistRoutes.BROWSE_PLAYLIST_SEARCH_VIDEOS
+                        : BROWSE_WATCH_LATER_ENTRIES;
+                var outcome = GetPlaylistItemsRequest.fetchPages(route, id, headers, scan::page);
                 if (cancelled.getAsBoolean()) return;
                 State state = switch (outcome) {
                     case FAILED -> State.FAILED;
@@ -87,6 +105,7 @@ public final class DatedPlaylistSearch {
         final List<String> words;
         final List<ChannelSearchResult> matches = new ArrayList<>();
         final Map<String, LocalDate> dates = new HashMap<>();
+        Map<String, LocalDate> additionDates;
         String title = "";
         int pages;
         int examined;
@@ -126,7 +145,14 @@ public final class DatedPlaylistSearch {
                         candidates.add(video);
                     }
                 }
-                if (!checkDates(candidates)) return false;
+                if (additionDates != null) {
+                    for (Video video : candidates) {
+                        if (cancelled.getAsBoolean()) return false;
+                        acceptDate(video, additionDates.get(WatchLaterDates.key(video.result.videoId, video.entryId)));
+                    }
+                } else if (!checkDates(candidates)) {
+                    return false;
+                }
             }
             report(State.LOADING);
             return true;
@@ -147,11 +173,7 @@ public final class DatedPlaylistSearch {
                     if (cancelled.getAsBoolean()) return false;
                     String id = candidate.result.videoId;
                     if (!dates.containsKey(id)) dates.put(id, requests.get(id).get());
-                    switch (range.match(dates.get(id))) {
-                        case IN_RANGE -> matches.add(candidate.result);
-                        case UNKNOWN -> unknown++;
-                        case OUT_OF_RANGE -> { }
-                    }
+                    acceptDate(candidate, dates.get(id));
                 }
                 return true;
             } catch (InterruptedException ex) {
@@ -167,8 +189,16 @@ public final class DatedPlaylistSearch {
             }
         }
 
+        void acceptDate(Video candidate, LocalDate date) {
+            switch (range.match(date)) {
+                case IN_RANGE -> matches.add(candidate.result);
+                case UNKNOWN -> unknown++;
+                case OUT_OF_RANGE -> { }
+            }
+        }
+
         void report(State state) {
-            rateLimited |= PublicationDates.isRateLimited();
+            if (additionDates == null) rateLimited |= PublicationDates.isRateLimited();
             onResults.accept(new Results(title, new ArrayList<>(matches), examined, unknown, unavailable,
                     rateLimited, state));
         }
@@ -193,6 +223,6 @@ public final class DatedPlaylistSearch {
         ChannelSearchResult result = ChannelSearchRequest.createResult(id, title,
                 thumb == null ? "" : ChannelSearchRequest.widestThumbnail(thumb.optJSONArray("thumbnails")),
                 ChannelSearchRequest.parseText(renderer.optJSONObject("lengthText")), details);
-        return new Video(result, title + "\n" + channelName);
+        return new Video(result, title + "\n" + channelName, renderer.optString("setVideoId"));
     }
 }
