@@ -1,6 +1,6 @@
 # YouTube Playlist Search & Date Filter
 
-Version du module **0.2.0**, dans **Nesquik’s patches 0.4.4**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
+Version du module **0.2.1**, dans **Nesquik’s patches 0.4.5**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
 
 ## Installation
 
@@ -13,7 +13,7 @@ Version du module **0.2.0**, dans **Nesquik’s patches 0.4.4**. La cible décla
 ## Dates d’ajout pour « À regarder plus tard »
 
 1. [Demande un export Google Takeout](https://takeout.google.com/) depuis le compte de ta playlist. Dans **YouTube et YouTube Music**, sélectionne **Playlists**.
-2. Dans le ZIP, ouvre le dossier des playlists et extrais `Watch later-videos.csv`. Fais l’export près de la date d’import. Si tu retires et réajoutes une vidéo entre les deux, le CSV identifie la vidéo sans identifier la nouvelle entrée.
+2. Dans le ZIP, ouvre le dossier des playlists et extrais `Vidéos de Watch later.csv` en français, ou `Watch later-videos.csv` en anglais. Fais l’export près de la date d’import. Si tu retires et réajoutes une vidéo entre les deux, le CSV identifie la vidéo sans identifier la nouvelle entrée.
 3. Dans YouTube patché, ouvre **À regarder plus tard**, puis sa loupe. Dans **Filtrer par période**, choisis **Date d’ajout** et **Importer le CSV Takeout**. Sélectionne le fichier de ce même compte.
 4. Les dates importées vont dans la base privée de l’application. Les nouveaux ajouts confirmés sur ce téléphone y sont ajoutés automatiquement, y compris quand le patch officiel de raccourci Morphe **Save to Watch later** est utilisé. Le menu natif est pris en charge par le callback d’édition YouTube.
 
@@ -41,9 +41,9 @@ Depuis la racine du dépôt avec un JDK 21 dans le PATH.
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.0.mpp
+youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.1.mpp
 youtube/playlist-date-filter/tests/host.sh .toolchain
-tools/build-collection.sh 0.4.4 .toolchain
+tools/build-collection.sh 0.4.5 .toolchain
 ```
 
 Le build du module génère des références de compilation depuis le MPP officiel épinglé. Le runtime officiel vient de la source Morphe sélectionnée lors du patching. Le catalogue de la collection utilise le workflow de publication habituel.

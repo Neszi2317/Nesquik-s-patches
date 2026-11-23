@@ -19,6 +19,11 @@ class TakeoutDatesTest {
         expect(TakeoutDates.read(new StringReader("\uFEFF\"Video ID\";\"Playlist Video Creation Timestamp\"\r\n"
                 + "\"jNQXAC9IVRw\";\"2005-04-23T20:31:52-07:00\"\r\n")).size() == 1);
         expect(TakeoutDates.read(new StringReader(HEADER)).isEmpty());
+        var french = TakeoutDates.read(new StringReader(
+                "ID vidéo,Code temporel de création de la vidéo de la playlist\n"
+                + " jNQXAC9IVRw,2026-11-23T19:22:45+00:00\n\n"));
+        expect(french.size() == 1);
+        expect(Instant.parse("2026-11-23T19:22:45Z").equals(french.get("jNQXAC9IVRw")));
         reject(HEADER + "jNQXAC9IVRw,2024-02-30 10:36:20 UTC\n");
         reject(HEADER + "jNQXAC9IVRw,2020-02-12T10:36:20\n");
         reject(HEADER + "wrongid,2024-02-19T10:36:20Z\n");

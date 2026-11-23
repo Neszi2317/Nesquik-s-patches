@@ -14,7 +14,9 @@ import app.morphe.extension.shared.innertube.utils.AuthUtils;
 import app.morphe.extension.youtube.patches.utils.requests.WatchLaterEntries;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Locale;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public final class TakeoutPicker extends Fragment {
@@ -35,7 +37,9 @@ public final class TakeoutPicker extends Fragment {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             picker.startActivityForResult(intent, READ_CSV);
         } catch (RuntimeException ex) {
-            showError(activity);
+            var locale = activity.getResources().getConfiguration().getLocales().get(0);
+            toast(activity, phrase(locale, "Impossible d’ouvrir le sélecteur de fichiers.",
+                    "Could not open the file picker."));
         }
     }
 
@@ -56,13 +60,31 @@ public final class TakeoutPicker extends Fragment {
         var headers = AuthUtils.getRequestHeader();
         toast(context, phrase(locale, "Lecture du CSV et de la playlist…", "Reading CSV and playlist…"));
         Utils.runOnBackgroundThread(() -> {
+            Map<String, Instant> dates;
             try (var stream = context.getContentResolver().openInputStream(source)) {
                 if (stream == null) throw new IllegalStateException("Missing document stream");
-                var dates = TakeoutDates.read(new InputStreamReader(stream, StandardCharsets.UTF_8));
-                var entries = WatchLaterEntries.fetch(headers);
-                if (!headers.equals(AuthUtils.getRequestHeader()) || AuthUtils.isNotLoggedIn()) {
-                    throw new IllegalStateException("The active YouTube session changed during the import");
-                }
+                dates = TakeoutDates.read(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            } catch (Exception ex) {
+                reportError(context, ex, phrase(locale, "CSV Takeout illisible ou colonnes inconnues.",
+                        "Takeout CSV could not be read or its columns were unrecognized."));
+                return;
+            }
+
+            Map<String, String> entries;
+            try {
+                entries = WatchLaterEntries.fetch(headers);
+            } catch (Exception ex) {
+                reportError(context, ex, phrase(locale, "CSV lu. Impossible de charger la playlist complète.",
+                        "CSV read. Could not load the complete playlist."));
+                return;
+            }
+            if (!headers.equals(AuthUtils.getRequestHeader()) || AuthUtils.isNotLoggedIn()) {
+                Utils.runOnMainThreadNowOrLater(() -> toast(context,
+                        phrase(locale, "Session YouTube modifiée pendant l’import. Réessaie sur la bonne chaîne.",
+                                "The YouTube session changed during import. Retry on the correct channel.")));
+                return;
+            }
+            try {
                 int matched = WatchLaterDates.open(context).importDates(dates, entries);
                 String message = matched == 0
                         ? phrase(locale, "Aucune vidéo du fichier ne correspond à cette playlist.",
@@ -70,18 +92,16 @@ public final class TakeoutPicker extends Fragment {
                         : String.format(locale, phrase(locale, "%d dates associées à la playlist.",
                                 "%d dates matched to the playlist."), matched);
                 Utils.runOnMainThreadNowOrLater(() -> toast(context, message));
-            } catch (Exception ex) {
-                Logger.printInfo(() -> "Watch later Takeout import failed", ex);
-                Utils.runOnMainThreadNowOrLater(() -> showError(context));
+            } catch (RuntimeException ex) {
+                reportError(context, ex, phrase(locale, "Impossible d’enregistrer les dates sur ce téléphone.",
+                        "Could not store the dates on this device."));
             }
         });
     }
 
-    private static void showError(Context context) {
-        Locale locale = context.getResources().getConfiguration().getLocales().get(0);
-        toast(context, phrase(locale,
-                "Import impossible. Choisis le CSV « Watch later-videos » du compte utilisé.",
-                "Could not import. Choose the Watch later-videos CSV from the active account."));
+    private static void reportError(Context context, Exception ex, String message) {
+        Logger.printInfo(() -> "Watch later Takeout import failed", ex);
+        Utils.runOnMainThreadNowOrLater(() -> toast(context, message));
     }
 
     private static void toast(Context context, String message) {

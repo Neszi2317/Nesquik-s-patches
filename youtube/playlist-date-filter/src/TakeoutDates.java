@@ -33,8 +33,9 @@ final class TakeoutDates {
         if (header.startsWith("\uFEFF")) header = header.substring(1);
         char delimiter = header.indexOf(',') >= 0 ? ',' : header.indexOf(';') >= 0 ? ';' : '\t';
         List<String> fields = split(header, delimiter);
-        int id = find(fields, "video id", "videoid", "id de la vidéo", "identifiant de la vidéo");
+        int id = find(fields, "video id", "videoid", "id vidéo", "id de la vidéo", "identifiant de la vidéo");
         int time = find(fields, "playlist video creation timestamp", "time added", "date added",
+                "code temporel de création de la vidéo de la playlist",
                 "horodatage de création de la vidéo dans la playlist", "date d'ajout");
         if (id < 0 || time < 0) throw new IOException("Expected Takeout video IDs and addition timestamps");
 
