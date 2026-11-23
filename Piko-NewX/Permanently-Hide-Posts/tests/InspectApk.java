@@ -25,7 +25,7 @@ public final class InspectApk {
         Map<String,Integer> links=new TreeMap<>();
         Set<String> watched=Set.of("Landroidx/compose/material/d0;","Lcom/x/models/x5;",
             "Lcom/x/urt/items/post/options/j0;","Lcom/x/urt/items/post/options/o;",
-            "Lcom/x/urt/ui/b;","Lcom/x/postdetailsheet/r;","Lcom/x/postdetailsheet/k;",
+            "Lcom/x/urt/e2;", "Lcom/x/urt/ui/b;","Lcom/x/postdetailsheet/r;","Lcom/x/postdetailsheet/k;",
             "Lcom/x/video/tab/g9;","Lcom/x/video/tab/k7;","Lcom/x/video/tab/z7;","Lcom/x/urt/ui/t0;",
             "Lcom/x/urt/ui/module/s;","Lcom/google/android/gms/internal/mlkit_vision_common/d9;",
             "Lapp/morphe/extension/crimera/settings/SettingsRegistry;",
@@ -62,17 +62,20 @@ public final class InspectApk {
                 }
                 if(ref instanceof StringReference s && s.getString().equals("Lfr/nesquik/hidden/Settings;") && c.getType().endsWith("/SettingsRegistry;"))links.put("settings registry",1);
                 if(ref instanceof FieldReference f && f.getDefiningClass().equals(PREFIX+"Menu;") && f.getName().equals("action") && c.getType().equals("Lcom/x/models/x5;") && ins.getOpcode()==Opcode.SPUT_OBJECT)links.put("private menu token initialized",1);
-                if(ref instanceof MethodReference f && f.getDefiningClass().endsWith("/NewXObjectBrowserHandler;") && !c.getType().startsWith("Lapp/morphe/"))links.put("native menu "+f.getName(),1);
+                if(ref instanceof MethodReference f && f.getDefiningClass().endsWith("/NewXObjectBrowserHandler;") && !c.getType().startsWith("Lapp/morphe/"))links.put("Piko browse menu "+f.getName(),1);
+                if(ref instanceof MethodReference f && c.getType().equals("Lcom/x/urt/e2;") && f.getName().equals("filterTimelineItems") && f.getDefiningClass().endsWith("/NewXTimelineFilter;"))links.merge("Piko timeline filter", 1, Integer::sum);
             }
         }
         }
         for(var e:links.entrySet())System.out.println(e.getKey()+" = "+e.getValue());
-        check(links.getOrDefault(PREFIX+"Projection;->render",0)>=9,"UI list hooks present");
-        for(String name:List.of("add","handle","icon","label"))
-            check(links.containsKey(PREFIX+"Menu;->"+name),"Extension menu hook "+name);
+        check(links.containsKey("Piko timeline filter"), "Piko official timeline filter linked");
+        check(links.getOrDefault(PREFIX+"Projection;->render",0)==19,"19 UI list hooks present");
+        for(String name:List.of("add","handle","usesIcon","label"))
+            check(links.getOrDefault(PREFIX+"Menu;->"+name, 0)==1,"Native menu hook "+name);
+        Set<String> checks = Set.of(Arrays.copyOfRange(args, 1, args.length));
         for(String name:List.of("addOption","handleOptionAction","labelFor","usesIcon"))
-            check(links.containsKey("native menu "+name),"Native dispatch "+name);
+            check(links.containsKey("Piko browse menu "+name)==checks.contains("browse"),"Expected Piko browse dispatch "+name);
         check(links.containsKey("settings registry") && links.containsKey("private menu token initialized"),"Settings and menu token linked");
-        if(args.length>1)check(links.keySet().stream().anyMatch(k->k.endsWith("/AdvancedFilter;")) && links.keySet().stream().anyMatch(k->k.endsWith("/SensitivePostFilter;")),"Personal keyword and sensitive filters linked");
+        if(checks.contains("combined"))check(links.keySet().stream().anyMatch(k->k.endsWith("/AdvancedFilter;")) && links.keySet().stream().anyMatch(k->k.endsWith("/SensitivePostFilter;")),"Personal keyword and sensitive filters linked");
     }
 }

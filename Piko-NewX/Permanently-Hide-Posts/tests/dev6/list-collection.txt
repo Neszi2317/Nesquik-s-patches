@@ -1,0 +1,157 @@
+INFO: Morphe data root: /workspace/scratch/9ef595b5fda9/work/toolchain/morphe-data (JAR-adjacent)
+INFO: Index: 0
+Name: NewX: Anonymous Names
+Description: Anonymisation visuelle stable des auteurs de publications. Profils et recherche de comptes préservés.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
+
+Index: 1
+Name: NewX: In-App Media Blur
+Description: Experimental media blur in replies, with a toggle in the native post header.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
+
+Index: 2
+Name: NewX: Hide Profile Pictures & Banners
+Description: Local black avatars and profile banners, pre-draw guards for Glide/Coil. Device validation required.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
+
+Index: 3
+Name: NewX: Hide all sensitive posts
+Description: Removes sensitive posts and their containers before rendering, including quoted and reposted media.
+Enabled: true
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
+
+Index: 4
+Name: NewX: Advanced Global Keyword Filter
+Description: Filtre local global avec import TXT/CSV/JSON, pseudos, citations, réponses et tendances. Configuration avant patching et dans Piko.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
+
+Index: 5
+Name: Universal auto-translated captions
+Description: Completes partial native caption translation lists. Server availability varies by video.
+Enabled: false
+Compatible packages:
+	Package name: com.google.android.youtube
+
+Index: 6
+Name: ! Hide blocked or ignored users
+Description: Adds a local member, typing and reaction-details filter to official Venus. Select Venus settings too. Discord 351.11 only.
+Enabled: true
+Compatible packages:
+	Package name: com.discord
+	Compatible versions:
+		351.11 - Stable
+	Version codes:
+		351.11 - Stable: ARM64_V8A=351011, ARMEABI_V7A=351011, X86_64=351011, X86=351011
+
+Index: 7
+Name: YouTube – Search in Playlists
+Description: Experimental playlist title/channel search with authenticated browse and pagination. Device validation required.
+Enabled: true
+Compatible packages:
+	Package name: com.google.android.youtube
+	Compatible versions:
+		21.16.256
+
+Index: 8
+Name: Force native Gemini summary button (Description)
+Description: Experimental native footer persistence for the SAME video and screen configuration after YouTube has supplied it once. No custom UI. Requires official Ask flyout menu; does not enable server eligibility for unseen videos.
+Enabled: false
+Compatible packages:
+	Package name: com.google.android.youtube
+
+Index: 9
+Name: ZZ Ask native action button
+Description: Original Gemini icon captured from native eligible button; phone icon only, tablet Poser une question; portrait action bar and experimental fullscreen quick actions with separately captured native side-panel presentation. Requires official Ask flyout menu.
+Enabled: false
+Compatible packages:
+	Package name: com.google.android.youtube
+	Compatible versions:
+		21.20.405
+
+Index: 10
+Name: Custom Home & Disable Main Feed
+Description: Runtime Home subreddit and removal of the Home navigation button. Reddit 2026.47.0; Android testing required.
+Enabled: false
+Compatible packages:
+	Package name: com.reddit.frontpage
+
+Index: 11
+Name: Hide NSFW posts
+Description: Removes posts marked 18+ from native feed lists. Independent, always active when included. Reddit 2026.47.0.
+Enabled: false
+Compatible packages:
+	Package name: com.reddit.frontpage
+
+Index: 12
+Name: NewX: Permanently Hide Posts
+Description: Masque individuellement les posts depuis leur menu. Nécessite le filtre par mots-clés de Piko.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
+
+Index: 13
+Name: Firefox - Local Website Blocker
+Description: Blocage local HTTP(S) par domaine ou chemin, configuré dans Morphe avant de patcher.
+Enabled: true
+Compatible packages:
+	Package name: org.mozilla.firefox
+	Compatible versions:
+		159.0
+		160.0
+		160.0.1
+
+Index: 14
+Name: Reddit - Local keyword filters
+Description: Local literal keyword lists and TXT import. Configure keyword/subreddit lists and TXT imports before patching. Filters posts (including flair), comments, search communities and typeahead suggestions. Reddit 2026.47.0.
+Enabled: false
+Compatible packages:
+	Package name: com.reddit.frontpage
+
+Index: 15
+Name: Rounded YouTube Captions (21.20.405)
+Description: Experimental: force rounded caption backgrounds and center caption text on YouTube 21.20.405.
+Enabled: true
+Compatible packages:
+	Package name: com.google.android.youtube
+
+Index: 16
+Name: Rounded YouTube Captions (21.44.528)
+Description: Experimental: rounded subtitle backgrounds with centered text.
+Enabled: true
+Compatible packages:
+	Package name: com.google.android.youtube
+
+Index: 17
+Name: Rounded YouTube Captions (21.46.522)
+Description: Experimental: rounded subtitle backgrounds with centered text.
+Enabled: true
+Compatible packages:
+	Package name: com.google.android.youtube
+
+Index: 18
+Name: Rounded YouTube Captions (21.45.82)
+Description: Experimental: rounded subtitle backgrounds with centered text.
+Enabled: true
+Compatible packages:
+	Package name: com.google.android.youtube

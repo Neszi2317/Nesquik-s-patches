@@ -1,0 +1,21 @@
+APK signature verified
+146826 unique DEX classes including Settings
+Lfr/nesquik/hidden/Menu;->add = 1
+Lfr/nesquik/hidden/Menu;->handle = 1
+Lfr/nesquik/hidden/Menu;->label = 1
+Lfr/nesquik/hidden/Menu;->usesIcon = 1
+Lfr/nesquik/hidden/Projection;->render = 19
+Piko timeline filter = 1
+private menu token initialized = 1
+settings registry = 1
+Piko official timeline filter linked
+19 UI list hooks present
+Native menu hook add
+Native menu hook handle
+Native menu hook usesIcon
+Native menu hook label
+Expected Piko browse dispatch addOption
+Expected Piko browse dispatch handleOptionAction
+Expected Piko browse dispatch labelFor
+Expected Piko browse dispatch usesIcon
+Settings and menu token linked

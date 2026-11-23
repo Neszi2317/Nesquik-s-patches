@@ -1,0 +1,27 @@
+PASS Exact positive 64-bit IDs
+PASS Malformed ID rejected
+PASS CRLF, duplicate and 64-bit import
+PASS Invalid or oversized import rejected atomically
+PASS Invalid or oversized import rejected atomically
+PASS Invalid or oversized import rejected atomically
+PASS Export and reimport
+PASS Initial list identity
+PASS Native groups preserved and action deduplicated
+PASS Icon only for the selected menu token
+PASS Targeted label
+PASS Native actions pass through
+PASS Selected post click consumed
+PASS Only selected ID persisted
+PASS Direct post, quote and repost filtered; unrelated row and cursor preserved
+PASS Module compacted
+PASS Empty module removed
+PASS Disable restores original list immediately on next render
+PASS Re-enable and refreshed list
+PASS Multiple hidden posts
+PASS Remove one ID
+PASS Clear restores source
+22 checks passed. Host fixtures only.
+PASS production Store reload after JVM restart using disk-backed preference fixture
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+PASS production AdvancedFilter and Projection in both orders with one survivor

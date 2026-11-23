@@ -44,6 +44,7 @@ public class HostTest {
         Group group=new Group(List.of(Action.Bookmark));
         List<?> groups=List.of(group),added=Menu.add(groups);
         check(added.size()==2 && added.get(0)==group && Menu.add(added)==added,"Native groups preserved and action deduplicated");
+        check(Menu.usesIcon(Action.None) && !Menu.usesIcon(Action.Bookmark) && !Menu.usesIcon(null),"Icon only for the selected menu token");
         check(Menu.label(Action.None,"x").equals("Masquer définitivement ce post") && Menu.label(Action.Bookmark,"Save").equals("Save"),"Targeted label");
         check(!Menu.handle(new Presenter(a),Action.Bookmark),"Native actions pass through");
         check(Menu.handle(new Presenter(a),Action.None),"Selected post click consumed");

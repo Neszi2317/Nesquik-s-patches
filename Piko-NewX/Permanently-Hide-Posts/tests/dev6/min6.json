@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "packageName": "com.twitter.android",
+  "packageVersion": "12.43.0-prod.01",
+  "isMount": false,
+  "appliedPatches": [
+    "NewX: Filter posts by keyword",
+    "NewX: Permanently Hide Posts"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

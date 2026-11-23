@@ -1,0 +1,52 @@
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+PASS 10007 assertions: state, distinct screens, recycling identity, 10000 dynamic IDs
+PASS 8 production identity/scope regression assertions
+PASS: 15 production-traversal assertions (host JVM; not Android rendering)
+PASS post text case-insensitive
+PASS username
+PASS display name
+PASS biography
+PASS quoted post propagates to container
+PASS out-of-order three-level reply chain
+PASS missing parent permissive
+PASS parent arrives in later page
+PASS missing parent strict
+PASS safe cycle terminates
+PASS cycle with forbidden node propagates
+PASS trend removal
+PASS account suggestion
+PASS consecutive blocked items remove empty module
+PASS module and vertical IDs compacted
+PASS unchanged list identity and pagination cursor retained
+PASS cursor survives removals
+PASS search suggestions and search accounts removed
+PASS long note text
+PASS link preview text
+PASS notification text removed and propagates to observed reply
+PASS notification source name
+PASS shared repost context does not cause strict false positive
+PASS configuration revision clears blocked cache
+PASS Unicode accents, format chars, duplicates
+PASS Unicode whole-word boundaries
+PASS regex escapes preserved
+PASS RE2 nested quantifier no backtracking hang
+Regex stress 31.798 ms
+PASS unsupported backreference rejected
+PASS quoted CSV
+PASS JSON object import
+PASS 1000 rules import and match
+BENCH rules=1000 build_ms=17.613 posts=20000 text_chars=306 average_us=11.917
+PASS 5000 rules import and match
+BENCH rules=5000 build_ms=34.132 posts=20000 text_chars=306 average_us=6.987
+PASS 1000-deep chain without recursion
+PASS persistent configuration reload does not overwrite with Morphe seed
+TOTAL PASS 35
+Passes : 24 · supprimés : 31 · cache : 1 · erreurs : 0
+100000 distinct accounts: zero alias/handle collisions; 227 ms cold host benchmark
+1000000 cached accesses: 37 ms host benchmark
+PASS 116 assertions; stability, 100000 collision sample, invalid inputs, grammar dimensions, cache, concurrency
+PASS 14 runtime assertions with host-only identity/preferences adapters; phase=first
+PASS 15 runtime assertions with host-only identity/preferences adapters; phase=second
+PASS 20052 assertions with host graphics/preferences adapters (not Android UI tests)
+PASS restart/persistence 1

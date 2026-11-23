@@ -1,0 +1,9 @@
+3720c0dd902b3138865dbefe0cdfbb9dd10ce57e8208a54a9229864b6e80dadb  input/com.twitter.android-12.43.0-prod.01.apkm
+2fdf62962d4a496a18d0b30edf82f8fd44dbf0c66f01f2f935824109d3b7cd2f  bundles/Nesquiks-patches-0.4.1.mpp
+17384a1ebc0e0f0809e79cfa6ac49c08af70f3da555e3bdaa83a75f80e327d42  Piko-NewX/Permanently-Hide-Posts/Permanently-Hide-Posts-0.1.1.mpp
+c859353b29f05e695d95f8b83979caafa752680d3ffeedb94f186fd901789515  test-output/min6/output.apk
+b52415f3542975919e487651f2bee816a86686c639f7c5da93c76b2550ce381d  test-output/default6/output.apk
+a9768008a7106c32c358ccc90fc44360172d3babb2fd4ae951e97ca618500ae7  test-output/browse6/output.apk
+748544b029d6800eb390e3bbf5486d89cb3b7fbf584faad949a3bf81088cfa73  test-output/full6/output.apk
+45c4d5be264e308ebe32a96b214061a6f0bd9f7d8f398a653c53bfea39af4c8a  test-output/reversed6/output.apk
+0e724a10eb7463878f71dee68fee0882c3e05718c3f01b64a3505b8c8c9096f4  test-output/dev5/output.apk

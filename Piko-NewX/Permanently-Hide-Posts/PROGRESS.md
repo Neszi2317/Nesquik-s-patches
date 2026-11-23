@@ -15,3 +15,9 @@ Reprise : tests/host.py .toolchain puis tests/integration.sh .toolchain X.apkm s
 Les six configurations positives ont été reconstruites et signées. Les trois configurations incomplètes ont été refusées explicitement. L’audit statique a contrôlé les six APK. Les deux ordres du bundle personnel et de Piko ont donné un APK identique au SHA-256. Le chargement, les références, la signature et la compatibilité du patching sont vérifiés. Les 21 assertions du scénario hôte, le test de relance du Store et le test conjoint avec le véritable AdvancedFilter sont passés. Les tests de régression du dépôt et son audit des cinq patchs X sont passés.
 Derniers fichiers : README principal, README et TESTS du module, tests et empreintes, PROGRESS.md. Détail des commandes dans README.md. Le MPP final a le SHA-256 65415af9c5bb69600564fd9a0f533a862cbdec8be50e47f1771c1c56bd476553.
 Pour reprendre : repartir de cette branche ou décompresser l’archive, réutiliser les commandes de la section « Compiler et vérifier », puis installer sur le S24 et parcourir la dernière colonne de TESTS.md. Priorité : vérifier le tap depuis un profil, le retour à la timeline, l’absence de rectangle vide et les liens profonds. Aucun appareil Android n’a été connecté pendant la mission.
+
+## Correction 0.1.1 pour Piko 3.12.0-dev.6
+
+Reproduction confirmée avec le bundle 0.4.0 et la sélection recommandée de Piko. Le navigateur de tweet est facultatif depuis que le patch raccorde ses quatre opérations au menu natif de X. Le registre et les ponts du filtre Piko sont toujours vérifiés au patching.
+
+Le MPP indépendant 0.1.1 et le catalogue 0.4.1 ont été compilés. L’APKM 12.43.0-prod.01 a été reconstruit et signé avec 52 patchs dans chacun des deux ordres de sources. Voir [le rapport de tests](TESTS.md) pour les configurations vérifiées et les essais restant à faire sur Android.

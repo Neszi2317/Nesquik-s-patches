@@ -20,13 +20,13 @@ La version expérimentale de Gemini dans la description restaure un bouton déj�
 
 ## Patch X indépendant
 
-[Permanently Hide Posts 0.1.0](Piko-NewX/Permanently-Hide-Posts/) ajoute « Masquer définitivement ce post » au menu ⋮ de X 12.43.0-prod.01. Il est inclus dans la source distante Nesquik’s patches dès la version 0.3.0. Actualise la source dans Morphe, puis coche **NewX: Permanently Hide Posts** avec les composants Piko **Browse tweet object** et **Filter posts by keyword**. Si tu utilisais le MPP local, désactive sa source séparée avant de repatcher.
+[Permanently Hide Posts 0.1.1](Piko-NewX/Permanently-Hide-Posts/) ajoute « Masquer définitivement ce post » au menu ⋮ de X 12.43.0-prod.01. Pour la correction compatible Piko 3.12.0-dev.6, actualise la source Nesquik’s patches en **0.4.1**. Coche **NewX: Permanently Hide Posts** et **NewX: Filter posts by keyword**. **Browse tweet object** est facultatif. Si tu utilisais le MPP local, désactive sa source séparée avant de repatcher.
 
 ## Importer dans Morphe
 
 Dans **Sources → + → Remote**, ajouter [l’URL du catalogue](https://raw.githubusercontent.com/Neszi2317/Nesquik-s-patches/refs/heads/main/patches-bundle.json). Tu peux aussi [télécharger le MPP depuis la dernière release](https://github.com/Neszi2317/Nesquik-s-patches/releases/latest) et l’ajouter depuis ton appareil.
 
-- **X**. Ajoute la source officielle **Piko 3.12.0-dev.5** et le bundle **Nesquik's patches**. Dans le même patching, sélectionne le patch officiel **NewX: Filter posts by keyword**, puis les patchs Nesquik souhaités. Leurs réglages apparaissent sous **Piko → Contenu** sur l'APK généré. Tu peux laisser la liste officielle vide et remplir le filtre avancé. Pour reproduire la configuration testée, laisse **NewX: Show sensitive media** décoché.
+- **X**. Ajoute la source officielle **Piko 3.12.0-dev.6** et le bundle **Nesquik's patches**. Dans le même patching, sélectionne le patch officiel **NewX: Filter posts by keyword**, puis les patchs Nesquik souhaités. Leurs réglages apparaissent sous **Piko → Contenu** sur l'APK généré. Tu peux laisser la liste officielle vide et remplir le filtre avancé. Pour reproduire la configuration testée, laisse **NewX: Show sensitive media** décoché.
 - **Reddit**. Garde la source officielle Morphe et sélectionne au moins un patch qui installe ses réglages, par exemple **Hide navigation buttons**, avec les patchs personnalisés. La compilation de référence utilise Morphe Patches **2.4.0-dev.6**.
 - **YouTube**. Sur **21.30.216**, les deux patchs Ask/Gemini ont été appliqués avec **Ask flyout menu** et **Hide video action buttons** de Morphe Patches **2.1.0-dev.8**. Sur **21.46.522**, la traduction et la variante correspondante des sous-titres arrondis ont été appliquées ensemble.
 - **Firefox**. Configure la liste des sites à bloquer dans les options de **Firefox - Local Website Blocker** avant de lancer le patching. Sur Firefox 160.0.1, utilise la préversion Heval 3.1.0-dev.1 pour combiner les deux sources.
@@ -50,7 +50,7 @@ Avec Java 21 et Python 3.11+ :
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-tools/build-collection.sh 0.4.0 .toolchain
+tools/build-collection.sh 0.4.1 .toolchain
 ```
 
 Le workflow GitHub **Release Morphe bundle** publie le MPP et actualise `patches-bundle.json` quand un nouveau bundle versionné est ajouté dans `bundles/`. Le lancement manuel reconstruit le bundle pour la version demandée.

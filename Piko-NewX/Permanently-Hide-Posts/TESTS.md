@@ -1,3 +1,26 @@
+# Validation de Permanently Hide Posts 0.1.1
+
+Tests sur l’APKM `com.twitter.android` 12.43.0-prod.01 (version 312430001), avec Morphe Desktop 2.3.0 et son moteur Morphe Patcher 2.5.0. L’édition indépendante 0.1.1 et le bundle 0.4.1 exposent le patch à Morphe. [Catalogue indépendant](tests/dev6/list-standalone.txt) · [Catalogue complet](tests/dev6/list-collection.txt) · [Empreintes SHA-256](tests/dev6/SHA256SUMS.txt)
+
+| Configuration exécutée | Résultat |
+| --- | --- |
+| Bundle 0.4.0, Piko dev.6 recommandé | [Échec reproduit à `Hidden.kt:54`](tests/dev6/reproduction-0.4.0.json) |
+| MPP 0.1.1, Piko dev.6, filtre officiel seul | [2 patchs, APK signé](tests/dev6/min6.json) · [audit DEX](tests/dev6/min6-dex.txt) |
+| MPP 0.1.1, Piko dev.6 recommandé, « Show sensitive media » décoché | [47 patchs, APK signé](tests/dev6/default6.json) · [audit DEX](tests/dev6/default6-dex.txt) |
+| MPP 0.1.1, Piko dev.6, navigateur d’objets, filtre, personnalisation du menu et traducteur | [5 patchs, APK signé](tests/dev6/browse6.json) · [audit DEX](tests/dev6/browse6-dex.txt) |
+| Bundle 0.4.1, Piko dev.6 recommandé, « Show sensitive media » décoché, six patchs X Nesquik | [52 patchs, APK signé](tests/dev6/full6.json) · [audit DEX](tests/dev6/full6-dex.txt) · [audit des autres patchs](tests/dev6/audit-x.txt) |
+| Même sélection, sources chargées dans l’ordre inverse | [52 patchs, APK signé](tests/dev6/reversed6.json) · [audit DEX](tests/dev6/reversed6-dex.txt) |
+| MPP 0.1.1, Piko dev.5, filtre et navigateur d’objets | [3 patchs, APK signé](tests/dev6/dev5.json) · [audit DEX](tests/dev6/dev5-dex.txt) |
+| MPP 0.1.1 avec le navigateur d’objets, filtre officiel absent | [Arrêt attendu avec le nom du prérequis manquant](tests/dev6/missing6.json) |
+
+L’audit contrôle la signature APK, les quatre appels du menu, l’initialisation du jeton d’action et la déclaration de l’écran de gestion. Il retrouve les 19 points d’appel du filtre permanent, le filtre officiel et, sur le bundle complet, le filtre avancé et le filtre des posts sensibles. Les classes JVM et l’extension DEX de Permanently Hide Posts sont identiques entre les deux MPP.
+
+Les tests JVM couvrent 22 assertions, dont l’ID du post sélectionné, la visibilité des autres posts, la restauration, l’import et l’export. Une seconde JVM recharge les préférences simulées sur disque. Un test exécute le filtre avancé et le filtre permanent ensemble. Les tests hôtes des autres patchs X ont passé. [Tests du patch](tests/dev6/host.txt) · [Tests des autres patchs](tests/dev6/x-host.txt)
+
+Le menu, le défilement, le redémarrage et la restauration dans X sur un appareil Android restent à vérifier. Aucun appareil Android ni gestionnaire 2.7.1 n’a été utilisé pendant ces essais.
+
+## Historique 0.1.0
+
 # Validation du 21 novembre 2026
 
 Cible fournie : X 12.43.0-prod.01 (312430001), paquet com.twitter.android. Morphe Desktop 2.3.0, API de bundle 2.4.0, Piko 3.12.0-dev.5. Le MPP indépendant contient une seule entrée sélectionnable. [Liste produite par Morphe](tests/list-patches.txt) · [Empreintes des entrées et des APK](tests/SHA256SUMS.txt)

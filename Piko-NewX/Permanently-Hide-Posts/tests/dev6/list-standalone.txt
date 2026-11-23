@@ -1,0 +1,9 @@
+INFO: Morphe data root: /workspace/scratch/9ef595b5fda9/work/toolchain/morphe-data (JAR-adjacent)
+INFO: Index: 0
+Name: NewX: Permanently Hide Posts
+Description: Masque individuellement les posts depuis leur menu. Nécessite le filtre par mots-clés de Piko.
+Enabled: false
+Compatible packages:
+	Package name: com.twitter.android
+	Compatible versions:
+		12.43.0-prod.01
