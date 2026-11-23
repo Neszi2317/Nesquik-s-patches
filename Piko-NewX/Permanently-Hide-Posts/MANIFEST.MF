@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Name: Nesquik Permanently Hidden Posts
-Version: 0.1.0
+Version: 0.1.1
 Patcher-Version: 2.4.0
 Author: Nesquik
 Description: Local permanent post hiding for NewX 12.43

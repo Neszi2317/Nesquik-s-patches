@@ -32,10 +32,8 @@ public final class Menu {
     public static Object label(Object value,Object original){
         return value!=null && value==action?"Masquer définitivement ce post":original;
     }
-    public static Object icon(Object value){
-        if(value==null || value!=action)return value;
-        Enum<?> e=(Enum<?>)value;
-        return e.getDeclaringClass().getEnumConstants()[e.ordinal()];
+    public static boolean usesIcon(Object value){
+        return value != null && value == action;
     }
     public static boolean handle(Object presenter,Object value){
         if(value==null || value!=action)return false;

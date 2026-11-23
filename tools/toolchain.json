@@ -3,6 +3,10 @@
     "url": "https://github.com/crimera/piko/releases/download/v3.12.0-dev.5/patches-3.12.0-dev.5.mpp",
     "sha256": "ea8e3601583b557c2c57a4b42b4333087a4735e2651e070e72a30c713a10cb85"
   },
+  "piko-dev6.mpp": {
+    "url": "https://github.com/crimera/piko/releases/download/v3.12.0-dev.6/patches-3.12.0-dev.6.mpp",
+    "sha256": "9c6d9d2d2693db667f1602eb4f402229fbc461255db6629e8bbb22eb55732d57"
+  },
   "morphe.jar": {
     "url": "https://github.com/MorpheApp/morphe-desktop/releases/download/v2.3.0/morphe-desktop-2.3.0-all.jar",
     "sha256": "e0e49525e1fbe1108d6cfd7398d39e0cd489c58a753e63653c1e8f11a0099757"

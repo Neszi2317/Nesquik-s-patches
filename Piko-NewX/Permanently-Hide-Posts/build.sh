@@ -24,4 +24,5 @@ cp "$build/rdex/classes.dex" "$build/bundle/extensions/nesquik-hidden.mpe"
 cp "$build/pdex/classes.dex" "$build/bundle/"
 cp "$d/MANIFEST.MF" "$build/bundle/META-INF/MANIFEST.MF"
 zipclasses "$build/bundle" "$build/complete.mpp"
-mv "$build/complete.mpp" "$d/Permanently-Hide-Posts-0.1.0.mpp"
+version=$(sed -n 's/^Version: //p' "$d/MANIFEST.MF")
+mv "$build/complete.mpp" "$d/Permanently-Hide-Posts-$version.mpp"
