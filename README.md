@@ -50,10 +50,14 @@ Avec Java 21 et Python 3.11+ :
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-tools/build-collection.sh 0.4.1 .toolchain
+tools/build-collection.sh 0.4.2 .toolchain
 ```
 
 Le workflow GitHub **Release Morphe bundle** publie le MPP et actualise `patches-bundle.json` quand un nouveau bundle versionné est ajouté dans `bundles/`. Le lancement manuel reconstruit le bundle pour la version demandée.
+
+## In-App Media Blur dans la version 0.4.2
+
+Actualise la source, sélectionne **NewX: In-App Media Blur**, puis appuie sur le bouton Flou à la place de Grok dans le détail de la publication. Le rendu des médias dans les réponses suit désormais l’état du bouton sur les deux chemins d’affichage pris en charge. [Détails et vérifications](x/README.md)
 
 ## Vérifications de la première version
 

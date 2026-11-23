@@ -1,0 +1,128 @@
+{
+  "bundle": "Nesquiks-patches-0.4.2.mpp",
+  "bundle_sha256": "7a37680524509f56b09a595d1b0f1ba81068d028d83782ec50adaf47d5385ab9",
+  "source_apkm_sha256": "3720c0dd902b3138865dbefe0cdfbb9dd10ce57e8208a54a9229864b6e80dadb",
+  "piko": "3.12.0-dev.6",
+  "morphe_desktop": "2.3.0",
+  "morphe_patcher": "2.5.0",
+  "runs": [
+    {
+      "configuration": "Blur and the official Piko keyword filter",
+      "apk_sha256": "6a5b4ac17a214bbbb39634e2044d390da99f7c92381a698823593822e52658ec",
+      "success": true,
+      "packageName": "com.twitter.android",
+      "packageVersion": "12.43.0-prod.01",
+      "isMount": false,
+      "appliedPatches": [
+        "NewX: Filter posts by keyword",
+        "NewX: In-App Media Blur"
+      ],
+      "failedPatches": [],
+      "stepResults": [
+        {
+          "step": "PATCHING",
+          "success": true
+        },
+        {
+          "step": "REBUILDING",
+          "success": true
+        },
+        {
+          "step": "SIGNING",
+          "success": true
+        }
+      ]
+    },
+    {
+      "configuration": "Piko recommended selection with Show sensitive media disabled and six Nesquik X patches",
+      "apk_sha256": "ff7619cab0172df5ec96d9b39285d44d57f8d6260b188290e0390e48604a0c66",
+      "success": true,
+      "packageName": "com.twitter.android",
+      "packageVersion": "12.43.0-prod.01",
+      "isMount": false,
+      "appliedPatches": [
+        "NewX: Crash logs",
+        "NewX: Custom font",
+        "NewX: Custom sharing domain",
+        "NewX: Customize drawer items",
+        "NewX: Customize inline actions",
+        "NewX: Customize media menu items",
+        "NewX: Customize navigation bar",
+        "NewX: Customize post menu items",
+        "NewX: Customize profile tabs",
+        "NewX: Customize timeline tabs",
+        "NewX: Disable automatic timeline refresh",
+        "NewX: Disable blur effects",
+        "NewX: Disable video player scrolling",
+        "NewX: Enable quality-of-life feature flags",
+        "NewX: Feature switch overrides",
+        "NewX: Filter For You by topic",
+        "NewX: Filter posts by keyword",
+        "NewX: Gallery profile Photos tab",
+        "NewX: Hide AI-generated posts",
+        "NewX: Hide Discover more",
+        "NewX: Hide Spaces bar",
+        "NewX: Hide compose button",
+        "NewX: Hide new posts pill",
+        "NewX: Hide post author actions",
+        "NewX: Hide post reply bar",
+        "NewX: Hide posts by verified account type",
+        "NewX: Hide premium upsell",
+        "NewX: Hide timeline tabs bar",
+        "NewX: Hide who to follow",
+        "NewX: Inline download button",
+        "NewX: Open canonical URLs",
+        "NewX: Permanent share links",
+        "NewX: Redirect downloads to chosen folder",
+        "NewX: Remove ads",
+        "NewX: Remove share tracking parameters",
+        "NewX: Restore pinned home tab",
+        "NewX: Restore timeline position",
+        "NewX: Set default media tab",
+        "NewX: Set default profile post sorting",
+        "NewX: Set default reply sorting",
+        "NewX: Show poll results",
+        "NewX: Theme",
+        "NewX: Translator",
+        "NewX: Unlock color customization",
+        "NewX: Unlock downloads",
+        "NewX: Permanently Hide Posts",
+        "NewX: In-App Media Blur",
+        "NewX: Hide all sensitive posts",
+        "NewX: Hide Profile Pictures & Banners",
+        "NewX: Anonymous Names",
+        "NewX: Advanced Global Keyword Filter",
+        "Disable Play Store updates"
+      ],
+      "failedPatches": [],
+      "stepResults": [
+        {
+          "step": "PATCHING",
+          "success": true
+        },
+        {
+          "step": "REBUILDING",
+          "success": true
+        },
+        {
+          "step": "SIGNING",
+          "success": true
+        }
+      ]
+    }
+  ],
+  "dex_audit": {
+    "signed_apk_verified": true,
+    "native_reply_renderer_scoped": true,
+    "compose_restart_uses_original_reply_delegate": true,
+    "native_grok_button_slot": true,
+    "image_video_and_gif_hooks": 3,
+    "other_nesquik_x_hooks_verified": true
+  },
+  "host_jvm": {
+    "regression_reproduced_with_old_reply_route": true,
+    "new_scope_assertions": 21,
+    "x_host_regressions_passed": true
+  },
+  "android_device_ui_tested": false
+}
