@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Name: YouTube Playlist Search & Date Filter
+Description: Date filtering add-on for Morphe Playlist search
+Version: 0.1.0
+Patcher-Version: 2.4.0
+Author: Nesquik
+License: GPL-3.0
+
