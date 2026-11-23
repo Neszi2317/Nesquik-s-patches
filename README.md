@@ -1,6 +1,6 @@
 # Nesquik's patches
 
-Collection personnelle de 19 entrées de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox** et **Discord**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
+Collection personnelle de 20 entrées de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox** et **Discord**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
 
 ## Compatibilité
 
@@ -11,6 +11,7 @@ Collection personnelle de 19 entrées de patchs Morphe pour **X**, **Reddit**, *
 | YouTube | Ask Native Action Bar 0.8.2 | 21.20.405, 21.30.216, 21.42.241, 21.44.528 |
 | YouTube | Bouton Gemini dans la description, expérimental | 21.30.216 |
 | YouTube | Recherche dans les playlists, expérimentale | 21.16.256 |
+| YouTube | [Playlist Search & Date Filter](youtube/playlist-date-filter) | 21.30.216 |
 | YouTube | [Traduction automatique des sous-titres 0.4.0](youtube/auto-translated-captions/) | 21.16.256 et 21.46.522 testées par patching |
 | YouTube | [Sous-titres arrondis](https://github.com/Neszi2317/Rounded-Subtiles/tree/v1.0.0-dev.6) | 21.20.405, 21.44.528, 21.45.82, 21.46.522 |
 | Firefox | [Blocage local de sites 0.1.3](firefox/) | 159.0, 160.0, 160.0.1 |
@@ -25,6 +26,8 @@ La version expérimentale de Gemini dans la description restaure un bouton déj�
 ## Importer dans Morphe
 
 Dans **Sources → + → Remote**, ajouter [l’URL du catalogue](https://raw.githubusercontent.com/Neszi2317/Nesquik-s-patches/refs/heads/main/patches-bundle.json). Tu peux aussi [télécharger le MPP depuis la dernière release](https://github.com/Neszi2317/Nesquik-s-patches/releases/latest) et l’ajouter depuis ton appareil.
+
+- **YouTube 21.30.216**. Pour le filtre par période, sélectionne **Playlist search** dans Morphe 2.4.0-dev.9 et **YouTube: Playlist Search & Date Filter** dans Nesquik’s patches. Les deux utilisent la même loupe et la même boîte de dialogue.
 
 - **X**. Ajoute la source officielle **Piko 3.12.0-dev.6** et le bundle **Nesquik's patches**. Dans le même patching, sélectionne le patch officiel **NewX: Filter posts by keyword**, puis les patchs Nesquik souhaités. Leurs réglages apparaissent sous **Piko → Contenu** sur l'APK généré. Tu peux laisser la liste officielle vide et remplir le filtre avancé. Pour reproduire la configuration testée, laisse **NewX: Show sensitive media** décoché.
 - **Reddit**. Garde la source officielle Morphe et sélectionne au moins un patch qui installe ses réglages, par exemple **Hide navigation buttons**, avec les patchs personnalisés. La compilation de référence utilise Morphe Patches **2.4.0-dev.6**.

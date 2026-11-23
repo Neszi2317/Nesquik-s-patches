@@ -46,5 +46,13 @@
   "kotlin-script-runtime-2.4.jar": {
     "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-script-runtime/2.4.0/kotlin-script-runtime-2.4.0.jar",
     "sha256": "196e8ecbf63daf477e34e67c2f871ee232ae7bf8b377432d876d1bbf9d273de3"
+  },
+  "official-playlist.mpp": {
+    "url": "https://github.com/MorpheApp/morphe-patches/releases/download/v2.4.0-dev.9/patches-2.4.0-dev.9.mpp",
+    "sha256": "e124ebb0aef72355ffa87f5c1edf4928daaf5baec09cccf18d921a13726448ab"
+  },
+  "dex-tools.zip": {
+    "url": "https://github.com/pxb1988/dex2jar/releases/download/v2.4/dex-tools-v2.4.zip",
+    "sha256": "ee7c45eb3c1d2474a6145d8d447e651a736a22d9664b6d3d3be5a5a817dda23a"
   }
 }

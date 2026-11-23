@@ -14,8 +14,9 @@ trap 'rm -rf "$scratch"' EXIT
 hidden="$root/Piko-NewX/Permanently-Hide-Posts"
 "$hidden/build.sh" "$toolchain"
 hidden_version=$(sed -n 's/^Version: //p' "$hidden/MANIFEST.MF")
+"$root/youtube/playlist-date-filter/build.sh" "$toolchain" "$scratch/playlist-date-filter.mpp"
 python3 "$root/tools/merge-bundles.py" \
     --version "$version" --r8 "$toolchain/r8.jar" --android-jar "$toolchain/android.jar" \
     --morphe-jar "$toolchain/morphe.jar" --output "$root/dist/Nesquiks-patches-$version.mpp" \
     "$scratch/x.mpp" "$root"/releases/*.mpp \
-    "$hidden/Permanently-Hide-Posts-$hidden_version.mpp"
+    "$hidden/Permanently-Hide-Posts-$hidden_version.mpp" "$scratch/playlist-date-filter.mpp"
