@@ -40,9 +40,11 @@ final class PlaylistDateResults {
     static void show(Activity activity, Locale locale, String playlistId, String query, DateRange range,
                      boolean byAddition) {
         var view = new PlaylistDateResults(activity, locale, playlistId, query, range, byAddition);
-        DatedPlaylistSearch.fetch(playlistId, query, range, AuthUtils.getRequestHeader(),
+        var headers = AuthUtils.getRequestHeader();
+        String scope = WatchLaterDates.scope(headers);
+        DatedPlaylistSearch.fetch(playlistId, query, range, headers,
                 () -> view.cancelled, view::receive,
-                byAddition ? () -> WatchLaterDates.open(activity).snapshot() : null);
+                byAddition ? () -> WatchLaterDates.open(activity).snapshot(scope) : null);
     }
 
     private PlaylistDateResults(Activity activity, Locale locale, String playlistId, String query, DateRange range,
@@ -113,6 +115,9 @@ final class PlaylistDateResults {
         if (results.state == State.PARTIAL) {
             summary.append("\n").append(text("Certaines pages de la playlist manquent.",
                     "Some playlist pages could not be read."));
+        } else if (results.state == State.FAILED) {
+            summary.append("\n").append(text("Aucune page de la playlist n’a pu être lue.",
+                    "No playlist pages could be read."));
         }
         if (results.rateLimited && results.unknown > 0) {
             summary.append("\n").append(text("YouTube limite les requêtes. Réessaie plus tard.",

@@ -12,7 +12,7 @@ import app.morphe.extension.shared.requests.Route;
 import app.morphe.extension.youtube.patches.utils.requests.ChannelSearchRequest.ChannelSearchResult;
 import fr.nesquik.playlistdate.DateRange;
 import fr.nesquik.playlistdate.PublicationDates;
-import fr.nesquik.playlistdate.WatchLaterDates;
+import fr.nesquik.playlistdate.WatchLaterDateIndex;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,10 +32,12 @@ public final class DatedPlaylistSearch {
             "contents.playlistVideoRenderer(videoId,setVideoId,title,thumbnail,lengthText,shortBylineText.runs.text,videoInfo)"
                     + ",continuations";
     private static final String ENTRY_LIST = "playlistVideoListRenderer(" + ENTRY_FIELDS + ")";
+    private static final String ENTRY_SECTION = ".tabs.tabRenderer.content.sectionListRenderer"
+            + ".contents(" + ENTRY_LIST + ",itemSectionRenderer.contents." + ENTRY_LIST + ")";
     private static final Route.CompiledRoute BROWSE_WATCH_LATER_ENTRIES = new Route(Route.Method.POST,
             "browse?fields=header.pageHeaderRenderer.pageTitle"
-                    + ",contents.singleColumnBrowseResultsRenderer.tabs.tabRenderer.content.sectionListRenderer"
-                    + ".contents(" + ENTRY_LIST + ",itemSectionRenderer.contents." + ENTRY_LIST + ")"
+                    + ",contents.singleColumnBrowseResultsRenderer" + ENTRY_SECTION
+                    + ",contents.twoColumnBrowseResultsRenderer" + ENTRY_SECTION
                     + ",continuationContents.playlistVideoListContinuation(" + ENTRY_FIELDS + ")&prettyPrint=false").compile();
 
     public static final class Results {
@@ -75,7 +77,7 @@ public final class DatedPlaylistSearch {
 
     public static void fetch(String id, String query, DateRange range, Map<String, String> headers,
                              BooleanSupplier cancelled, Consumer<Results> onResults,
-                             Supplier<Map<String, LocalDate>> additionDates) {
+                             Supplier<WatchLaterDateIndex> additionDates) {
         Utils.runOnBackgroundThread(() -> {
             Scan scan = new Scan(query, range, cancelled, onResults);
             try {
@@ -105,7 +107,7 @@ public final class DatedPlaylistSearch {
         final List<String> words;
         final List<ChannelSearchResult> matches = new ArrayList<>();
         final Map<String, LocalDate> dates = new HashMap<>();
-        Map<String, LocalDate> additionDates;
+        WatchLaterDateIndex additionDates;
         String title = "";
         int pages;
         int examined;
@@ -141,15 +143,17 @@ public final class DatedPlaylistSearch {
                     Video video = parseVideo(renderer);
                     if (video == null) {
                         unavailable++;
+                    } else if (additionDates != null) {
+                        LocalDate date = additionDates.resolve(video.result.videoId, video.entryId);
+                        if (words.isEmpty() || ChannelUploadsRequest.matches(video.text, words)) {
+                            acceptDate(video, date);
+                        }
                     } else if (words.isEmpty() || ChannelUploadsRequest.matches(video.text, words)) {
                         candidates.add(video);
                     }
                 }
                 if (additionDates != null) {
-                    for (Video video : candidates) {
-                        if (cancelled.getAsBoolean()) return false;
-                        acceptDate(video, additionDates.get(WatchLaterDates.key(video.result.videoId, video.entryId)));
-                    }
+                    additionDates.savePage();
                 } else if (!checkDates(candidates)) {
                     return false;
                 }

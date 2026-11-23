@@ -11,7 +11,6 @@ import android.widget.Toast;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.innertube.utils.AuthUtils;
-import app.morphe.extension.youtube.patches.utils.requests.WatchLaterEntries;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -57,8 +56,8 @@ public final class TakeoutPicker extends Fragment {
                     "Sign in to the YouTube account for this Takeout file."));
             return;
         }
-        var headers = AuthUtils.getRequestHeader();
-        toast(context, phrase(locale, "Lecture du CSV et de la playlist…", "Reading CSV and playlist…"));
+        String scope = WatchLaterDates.scope(AuthUtils.getRequestHeader());
+        toast(context, phrase(locale, "Lecture du CSV…", "Reading CSV…"));
         Utils.runOnBackgroundThread(() -> {
             Map<String, Instant> dates;
             try (var stream = context.getContentResolver().openInputStream(source)) {
@@ -70,27 +69,17 @@ public final class TakeoutPicker extends Fragment {
                 return;
             }
 
-            Map<String, String> entries;
-            try {
-                entries = WatchLaterEntries.fetch(headers);
-            } catch (Exception ex) {
-                reportError(context, ex, phrase(locale, "CSV lu. Impossible de charger la playlist complète.",
-                        "CSV read. Could not load the complete playlist."));
-                return;
-            }
-            if (!headers.equals(AuthUtils.getRequestHeader()) || AuthUtils.isNotLoggedIn()) {
+            if (AuthUtils.isNotLoggedIn() || !scope.equals(WatchLaterDates.scope(AuthUtils.getRequestHeader()))) {
                 Utils.runOnMainThreadNowOrLater(() -> toast(context,
                         phrase(locale, "Session YouTube modifiée pendant l’import. Réessaie sur la bonne chaîne.",
                                 "The YouTube session changed during import. Retry on the correct channel.")));
                 return;
             }
             try {
-                int matched = WatchLaterDates.open(context).importDates(dates, entries);
-                String message = matched == 0
-                        ? phrase(locale, "Aucune vidéo du fichier ne correspond à cette playlist.",
-                                "No videos in this file matched this playlist.")
-                        : String.format(locale, phrase(locale, "%d dates associées à la playlist.",
-                                "%d dates matched to the playlist."), matched);
+                int count = WatchLaterDates.open(context).importDates(scope, dates);
+                String message = String.format(locale, phrase(locale,
+                        "%d dates Takeout enregistrées sur ce téléphone.",
+                        "%d Takeout dates stored on this device."), count);
                 Utils.runOnMainThreadNowOrLater(() -> toast(context, message));
             } catch (RuntimeException ex) {
                 reportError(context, ex, phrase(locale, "Impossible d’enregistrer les dates sur ce téléphone.",

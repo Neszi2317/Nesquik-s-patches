@@ -14,6 +14,8 @@ class VerifyApk {
     private static final String OFFICIAL = "Lapp/morphe/extension/youtube/patches/PlaylistSearchPatch;";
     private static final String DIALOG = "Lfr/nesquik/playlistdate/PlaylistDateDialog;";
     private static final String DATED = "Lapp/morphe/extension/youtube/patches/utils/requests/DatedPlaylistSearch";
+    private static final String PICKER = "Lfr/nesquik/playlistdate/TakeoutPicker;";
+    private static final String STORE = "Lfr/nesquik/playlistdate/WatchLaterDates;";
 
     public static void main(String[] args) throws Exception {
         File apk = new File(args[0]);
@@ -34,6 +36,7 @@ class VerifyApk {
         int nativeConfirmations = 0;
         int morpheConfirmations = 0;
         int morpheBodies = 0;
+        int takeoutStores = 0;
         int linkedReferences = 0;
         for (ClassDef cls : classes.values()) {
             boolean module = cls.getType().startsWith("Lfr/nesquik/playlistdate/")
@@ -43,6 +46,17 @@ class VerifyApk {
                 for (var instruction : method.getImplementation().getInstructions()) {
                     if (!(instruction instanceof ReferenceInstruction op)) continue;
                     if (op.getReference() instanceof MethodReference ref) {
+                        if (cls.getType().equals(PICKER)) {
+                            if (ref.getDefiningClass().startsWith("Lapp/morphe/extension/")
+                                    && !ref.getDefiningClass().equals("Lapp/morphe/extension/shared/Utils;")
+                                    && !ref.getDefiningClass().equals("Lapp/morphe/extension/shared/Logger;")
+                                    && !ref.getDefiningClass().equals("Lapp/morphe/extension/shared/innertube/utils/AuthUtils;")) {
+                                throw new AssertionError("Unexpected Morphe dependency in Takeout picker " + ref);
+                            }
+                            if (ref.getDefiningClass().equals(STORE) && ref.getName().equals("importDates")) {
+                                takeoutStores++;
+                            }
+                        }
                         if (ref.getDefiningClass().equals(OFFICIAL) && ref.getName().equals("addSearchMenuItem")) {
                             menuHooks++;
                         }
@@ -83,7 +97,9 @@ class VerifyApk {
         if (nativeConfirmations != 1 || morpheConfirmations != 3 || morpheBodies != 2) {
             throw new AssertionError("Watch later hooks: " + nativeConfirmations + " / " + morpheConfirmations + " / " + morpheBodies);
         }
+        if (takeoutStores != 1) throw new AssertionError("Unexpected Takeout store paths: " + takeoutStores);
         System.out.println("Watch later: one native completion hook and two Morphe request paths.");
+        System.out.println("Takeout picker writes to the local store without invoking the playlist client.");
         System.out.println("APK signature valid. One playlist toolbar hook and one dialog redirection.");
         System.out.println(linkedReferences + " official runtime references resolved. No duplicate Dex classes.");
     }

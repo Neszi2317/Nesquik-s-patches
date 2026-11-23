@@ -1,6 +1,6 @@
 # YouTube Playlist Search & Date Filter
 
-Version du module **0.2.1**, dans **Nesquik’s patches 0.4.5**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
+Version du module **0.2.2**, dans **Nesquik’s patches 0.4.6**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
 
 ## Installation
 
@@ -15,9 +15,9 @@ Version du module **0.2.1**, dans **Nesquik’s patches 0.4.5**. La cible décla
 1. [Demande un export Google Takeout](https://takeout.google.com/) depuis le compte de ta playlist. Dans **YouTube et YouTube Music**, sélectionne **Playlists**.
 2. Dans le ZIP, ouvre le dossier des playlists et extrais `Vidéos de Watch later.csv` en français, ou `Watch later-videos.csv` en anglais. Fais l’export près de la date d’import. Si tu retires et réajoutes une vidéo entre les deux, le CSV identifie la vidéo sans identifier la nouvelle entrée.
 3. Dans YouTube patché, ouvre **À regarder plus tard**, puis sa loupe. Dans **Filtrer par période**, choisis **Date d’ajout** et **Importer le CSV Takeout**. Sélectionne le fichier de ce même compte.
-4. Les dates importées vont dans la base privée de l’application. Les nouveaux ajouts confirmés sur ce téléphone y sont ajoutés automatiquement, y compris quand le patch officiel de raccourci Morphe **Save to Watch later** est utilisé. Le menu natif est pris en charge par le callback d’édition YouTube.
+4. Le message « dates Takeout enregistrées sur ce téléphone » confirme l’enregistrement local. L’import aboutit sans charger la playlist. Au moment de la recherche, le patch associe les dates aux entrées des pages reçues de YouTube. Les nouveaux ajouts confirmés sur ce téléphone sont enregistrés automatiquement, que tu utilises le menu natif ou le raccourci Morphe **Save to Watch later**.
 
-Le patch utilise le jour correspondant à ton fuseau lors de la recherche. Une vidéo déjà présente conserve sa date. Un résultat d’ajout est associé à l’identifiant de la nouvelle entrée de la playlist. Une entrée ajoutée ailleurs dont l’identifiant est inconnu apparaît dans le compteur des dates inconnues. Tu peux réimporter un export plus récent pour récupérer ces dates. Les données restent dans le stockage local de l’application et suivent son cycle de vie.
+Le patch utilise le jour correspondant à ton fuseau lors de la recherche. Après le premier rapprochement avec un identifiant d’entrée, une date importée ne s’applique qu’à cette entrée. Un nouvel ajout confirmé a priorité sur le CSV. Les entrées pour lesquelles aucune date n’a pu être vérifiée apparaissent dans le compteur des dates inconnues. Un nouvel export remplace les dates Takeout du profil courant et conserve les ajouts confirmés. Les imports sont associés à la chaîne lorsque YouTube fournit son identifiant. Pour les comptes sans identifiant exposé, le patch utilise le dernier CSV importé sur l’appareil dans ce cas. Utilise l’export de la chaîne ouverte dans YouTube. Les données restent dans le stockage local de l’application.
 
 ## Comportement
 
@@ -41,9 +41,9 @@ Depuis la racine du dépôt avec un JDK 21 dans le PATH.
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.1.mpp
+youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.2.mpp
 youtube/playlist-date-filter/tests/host.sh .toolchain
-tools/build-collection.sh 0.4.5 .toolchain
+tools/build-collection.sh 0.4.6 .toolchain
 ```
 
 Le build du module génère des références de compilation depuis le MPP officiel épinglé. Le runtime officiel vient de la source Morphe sélectionnée lors du patching. Le catalogue de la collection utilise le workflow de publication habituel.
