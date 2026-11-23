@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.text.InputType;
@@ -37,7 +38,17 @@ import java.util.function.Consumer;
 public final class PlaylistDateDialog {
     private static final int MAX_REMEMBERED_PLAYLISTS = 10;
     // Only accessed on the UI thread, and the values do not retain the activity.
-    private static final Map<Activity, Map<String, DateRange>> remembered = new WeakHashMap<>();
+    private static final Map<Activity, Map<String, Filter>> remembered = new WeakHashMap<>();
+
+    private static final class Filter {
+        final DateRange dates;
+        final boolean byAddition;
+
+        Filter(DateRange dates, boolean byAddition) {
+            this.dates = dates;
+            this.byAddition = byAddition;
+        }
+    }
 
     private PlaylistDateDialog() {}
 
@@ -54,10 +65,10 @@ public final class PlaylistDateDialog {
     private static void showWithDates(Activity activity, String title,
                                       Consumer<String> originalSearch, String playlistId) {
         Locale locale = activity.getResources().getConfiguration().getLocales().get(0);
-        Map<String, DateRange> filters = remembered.computeIfAbsent(activity, ignored ->
+        Map<String, Filter> filters = remembered.computeIfAbsent(activity, ignored ->
                 new LinkedHashMap<>(MAX_REMEMBERED_PLAYLISTS, 0.75f, true) {
                     @Override
-                    protected boolean removeEldestEntry(Map.Entry<String, DateRange> eldest) {
+                    protected boolean removeEldestEntry(Map.Entry<String, Filter> eldest) {
                         return size() > MAX_REMEMBERED_PLAYLISTS;
                     }
                 });
@@ -66,19 +77,20 @@ public final class PlaylistDateDialog {
         edit.setSingleLine(true);
         edit.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        var controls = new DateControls(activity, locale, filters.getOrDefault(playlistId, DateRange.EMPTY));
+        var controls = new DateControls(activity, locale,
+                filters.getOrDefault(playlistId, new Filter(DateRange.EMPTY, false)),
+                WatchLaterDates.PLAYLIST.equals(playlistId));
         String searchLabel = str("morphe_search_dialog_search");
         var dialogAndLayout = CustomDialog.create(activity, title, null, edit, searchLabel,
                 () -> {
                     DateRange range = controls.dates;
                     if (!range.isValid()) return;
                     String query = edit.getText().toString().trim();
+                    filters.put(playlistId, new Filter(range, controls.byAddition));
                     if (range.isEmpty()) {
-                        filters.remove(playlistId);
                         if (!query.isEmpty()) originalSearch.accept(query);
                     } else {
-                        filters.put(playlistId, range);
-                        PlaylistDateResults.show(activity, locale, playlistId, query, range);
+                        PlaylistDateResults.show(activity, locale, playlistId, query, range, controls.byAddition);
                     }
                 }, () -> {}, null, null, true);
         Dialog dialog = dialogAndLayout.first;
@@ -87,11 +99,12 @@ public final class PlaylistDateDialog {
         // so only the original text field has the field background, even with the calendar below.
         LinearLayout content = (LinearLayout) edit.getParent();
         ScrollView scroll = (ScrollView) content.getParent();
-        edit.setBackground(scroll.getBackground());
+        var fieldBackground = scroll.getBackground();
+        scroll.setBackgroundColor(Color.TRANSPARENT);
+        edit.setBackground(fieldBackground);
         int fieldPadding = dp(activity, 8);
         edit.setPadding(fieldPadding, fieldPadding, fieldPadding, fieldPadding);
         edit.setClipToOutline(true);
-        scroll.setBackgroundColor(Color.TRANSPARENT);
         scroll.setPadding(0, 0, 0, 0);
         scroll.setClipToOutline(false);
         content.addView(controls.layout, new LinearLayout.LayoutParams(
@@ -122,13 +135,17 @@ public final class PlaylistDateDialog {
         final Button until;
         final Button clear;
         final TextView error;
+        final Button dateType;
+        final Button importDates;
         DateRange dates;
+        boolean byAddition;
         Button search;
 
-        DateControls(Activity activity, Locale locale, DateRange initialDates) {
+        DateControls(Activity activity, Locale locale, Filter initial, boolean watchLater) {
             this.activity = activity;
             this.locale = locale;
-            this.dates = initialDates;
+            this.dates = initial.dates;
+            this.byAddition = watchLater && initial.byAddition;
             format = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
             layout = new LinearLayout(activity);
             layout.setOrientation(LinearLayout.VERTICAL);
@@ -138,15 +155,24 @@ public final class PlaylistDateDialog {
             heading.setTypeface(Typeface.DEFAULT_BOLD);
             layout.addView(heading);
 
+            if (watchLater) {
+                dateType = textButton(activity, locale);
+                dateType.setOnClickListener(view -> pickDateType());
+                layout.addView(dateType);
+                importDates = textButton(activity, locale);
+                importDates.setText(phrase(locale, "Importer le CSV Takeout", "Import Takeout CSV"));
+                importDates.setOnClickListener(view -> TakeoutPicker.open(activity));
+                layout.addView(importDates);
+            } else {
+                dateType = null;
+                importDates = null;
+            }
+
             from = pickButton(true);
             until = pickButton(false);
             layout.addView(CustomDialog.createButtonRow(activity, from, until));
 
-            clear = new Button(activity, null, android.R.attr.borderlessButtonStyle);
-            clear.setAllCaps(false);
-            clear.setTextSize(14);
-            clear.setMinHeight(dp(activity, 48));
-            clear.setTextColor(ThemeUtils.getDialogTextColor());
+            clear = textButton(activity, locale);
             clear.setText(phrase(locale, "Effacer les dates", "Clear dates"));
             clear.setOnClickListener(view -> {
                 dates = DateRange.EMPTY;
@@ -160,6 +186,31 @@ public final class PlaylistDateDialog {
                     "The start date must be on or before the end date."));
             error.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
             layout.addView(error);
+        }
+
+        private void pickDateType() {
+            var menu = new PopupMenu(activity, dateType);
+            menu.getMenu().add(1, 1, 0, phrase(locale, "Date de publication", "Publication date"))
+                    .setChecked(!byAddition);
+            menu.getMenu().add(1, 2, 1, phrase(locale, "Date d’ajout", "Date added"))
+                    .setChecked(byAddition);
+            menu.getMenu().setGroupCheckable(1, true, true);
+            menu.setOnMenuItemClickListener(item -> {
+                byAddition = item.getItemId() == 2;
+                refresh();
+                return true;
+            });
+            menu.show();
+        }
+
+        private static Button textButton(Activity activity, Locale locale) {
+            var button = new Button(activity, null, android.R.attr.borderlessButtonStyle);
+            button.setAllCaps(false);
+            button.setTextSize(14);
+            button.setTextLocale(locale);
+            button.setMinHeight(dp(activity, 48));
+            button.setTextColor(ThemeUtils.getDialogTextColor());
+            return button;
         }
 
         private Button pickButton(boolean start) {
@@ -185,6 +236,11 @@ public final class PlaylistDateDialog {
         }
 
         void refresh() {
+            if (dateType != null) {
+                dateType.setText(byAddition ? phrase(locale, "Date d’ajout ▾", "Date added ▾")
+                        : phrase(locale, "Date de publication ▾", "Publication date ▾"));
+                importDates.setVisibility(byAddition ? View.VISIBLE : View.GONE);
+            }
             setDate(from, dates.start(), phrase(locale, "Du", "From"),
                     phrase(locale, "Date de début", "Start date"));
             setDate(until, dates.end(), phrase(locale, "Au", "To"),

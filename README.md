@@ -11,7 +11,7 @@ Collection personnelle de 20 entrées de patchs Morphe pour **X**, **Reddit**, *
 | YouTube | Ask Native Action Bar 0.8.2 | 21.20.405, 21.30.216, 21.42.241, 21.44.528 |
 | YouTube | Bouton Gemini dans la description, expérimental | 21.30.216 |
 | YouTube | Recherche dans les playlists, expérimentale | 21.16.256 |
-| YouTube | [Playlist Search & Date Filter](youtube/playlist-date-filter) | 21.30.216 |
+| YouTube | [Playlist Search & Date Filter](youtube/playlist-date-filter), dont date d’ajout pour « À regarder plus tard » | 21.30.216 |
 | YouTube | [Traduction automatique des sous-titres 0.4.0](youtube/auto-translated-captions/) | 21.16.256 et 21.46.522 testées par patching |
 | YouTube | [Sous-titres arrondis](https://github.com/Neszi2317/Rounded-Subtiles/tree/v1.0.0-dev.6) | 21.20.405, 21.44.528, 21.45.82, 21.46.522 |
 | Firefox | [Blocage local de sites 0.1.3](firefox/) | 159.0, 160.0, 160.0.1 |

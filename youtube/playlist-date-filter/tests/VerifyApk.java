@@ -31,6 +31,9 @@ class VerifyApk {
         }
         int menuHooks = 0;
         int dialogHooks = 0;
+        int nativeConfirmations = 0;
+        int morpheConfirmations = 0;
+        int morpheBodies = 0;
         int linkedReferences = 0;
         for (ClassDef cls : classes.values()) {
             boolean module = cls.getType().startsWith("Lfr/nesquik/playlistdate/")
@@ -49,6 +52,18 @@ class VerifyApk {
                             }
                             dialogHooks++;
                         }
+                        if (ref.getDefiningClass().equals("Lfr/nesquik/playlistdate/WatchLaterEvents;")) {
+                            switch (ref.getName()) {
+                                case "nativeResponse" -> {
+                                    if (!method.toString().equals("Lalcm;->n(Laksp;Ljava/lang/Object;)V")) {
+                                        throw new AssertionError("Unexpected native playlist confirmation caller " + method);
+                                    }
+                                    nativeConfirmations++;
+                                }
+                                case "morpheResponse" -> morpheConfirmations++;
+                                case "morpheAddBody" -> morpheBodies++;
+                            }
+                        }
                         if (module && ref.getDefiningClass().startsWith("Lapp/morphe/extension/")) {
                             verifyMethod(classes, ref);
                             linkedReferences++;
@@ -65,6 +80,10 @@ class VerifyApk {
             throw new AssertionError("Menu hooks " + menuHooks + ", custom dialog hooks " + dialogHooks
                     + ", official runtime references " + linkedReferences);
         }
+        if (nativeConfirmations != 1 || morpheConfirmations != 3 || morpheBodies != 2) {
+            throw new AssertionError("Watch later hooks: " + nativeConfirmations + " / " + morpheConfirmations + " / " + morpheBodies);
+        }
+        System.out.println("Watch later: one native completion hook and two Morphe request paths.");
         System.out.println("APK signature valid. One playlist toolbar hook and one dialog redirection.");
         System.out.println(linkedReferences + " official runtime references resolved. No duplicate Dex classes.");
     }

@@ -37,13 +37,16 @@ final class PlaylistDateResults {
     private Results results;
     private int page;
 
-    static void show(Activity activity, Locale locale, String playlistId, String query, DateRange range) {
-        var view = new PlaylistDateResults(activity, locale, playlistId, query, range);
+    static void show(Activity activity, Locale locale, String playlistId, String query, DateRange range,
+                     boolean byAddition) {
+        var view = new PlaylistDateResults(activity, locale, playlistId, query, range, byAddition);
         DatedPlaylistSearch.fetch(playlistId, query, range, AuthUtils.getRequestHeader(),
-                () -> view.cancelled, view::receive);
+                () -> view.cancelled, view::receive,
+                byAddition ? () -> WatchLaterDates.open(activity).snapshot() : null);
     }
 
-    private PlaylistDateResults(Activity activity, Locale locale, String playlistId, String query, DateRange range) {
+    private PlaylistDateResults(Activity activity, Locale locale, String playlistId, String query, DateRange range,
+                                boolean byAddition) {
         this.playlistId = playlistId;
         this.locale = locale;
         var bar = new LinearLayout(activity);
@@ -59,6 +62,7 @@ final class PlaylistDateResults {
         navigation.setVisibility(View.GONE);
         bar.addView(navigation);
         String period = periodLabel(range);
+        if (byAddition) period = text("Date d’ajout", "Date added") + " · " + period;
         sheet = new SearchResultsSheet(activity, query.isEmpty() ? period : query + " · " + period,
                 str("morphe_playlist_search_results"), bar, () -> cancelled = true);
     }

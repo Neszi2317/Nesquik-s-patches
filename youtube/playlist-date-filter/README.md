@@ -1,6 +1,6 @@
 # YouTube Playlist Search & Date Filter
 
-Version du module **0.1.0**, dans **Nesquik’s patches 0.4.3**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
+Version du module **0.2.0**, dans **Nesquik’s patches 0.4.4**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
 
 ## Installation
 
@@ -10,13 +10,22 @@ Version du module **0.1.0**, dans **Nesquik’s patches 0.4.3**. La cible décla
 4. Ouvre une playlist et touche sa loupe Morphe, à côté de la recherche générale YouTube. Dans **Rechercher dans la playlist**, saisis un texte, une date ou les deux, puis touche **Rechercher**.
 5. Pour retrouver la recherche textuelle habituelle, ouvre la même boîte de dialogue, touche **Effacer les dates**, puis **Rechercher**. **Annuler** abandonne les changements de la boîte de dialogue.
 
+## Dates d’ajout pour « À regarder plus tard »
+
+1. [Demande un export Google Takeout](https://takeout.google.com/) depuis le compte de ta playlist. Dans **YouTube et YouTube Music**, sélectionne **Playlists**.
+2. Dans le ZIP, ouvre le dossier des playlists et extrais `Watch later-videos.csv`. Fais l’export près de la date d’import. Si tu retires et réajoutes une vidéo entre les deux, le CSV identifie la vidéo sans identifier la nouvelle entrée.
+3. Dans YouTube patché, ouvre **À regarder plus tard**, puis sa loupe. Dans **Filtrer par période**, choisis **Date d’ajout** et **Importer le CSV Takeout**. Sélectionne le fichier de ce même compte.
+4. Les dates importées vont dans la base privée de l’application. Les nouveaux ajouts confirmés sur ce téléphone y sont ajoutés automatiquement, y compris quand le patch officiel de raccourci Morphe **Save to Watch later** est utilisé. Le menu natif est pris en charge par le callback d’édition YouTube.
+
+Le patch utilise le jour correspondant à ton fuseau lors de la recherche. Une vidéo déjà présente conserve sa date. Un résultat d’ajout est associé à l’identifiant de la nouvelle entrée de la playlist. Une entrée ajoutée ailleurs dont l’identifiant est inconnu apparaît dans le compteur des dates inconnues. Tu peux réimporter un export plus récent pour récupérer ces dates. Les données restent dans le stockage local de l’application et suivent son cycle de vie.
+
 ## Comportement
 
 Le texte et les dates sont indépendants. Avec deux dates, les deux jours limites sont inclus. Avec une seule date, le filtre commence ou se termine ce jour-là. Si les dates sont inversées, le dialogue affiche l’erreur et bloque la recherche. La période appliquée est retenue par playlist tant que l’activité YouTube reste en mémoire.
 
 La recherche conserve l’ordre et les doublons de la playlist. Le mode période affiche les correspondances au fil des pages et garde des boutons **Précédent** et **Suivant** lorsque plus de 60 résultats correspondent. Les résultats gardent la lecture dans la playlist d’origine.
 
-Le filtre utilise le jour civil de publication fourni explicitement par YouTube. Les entrées sans date disponible apparaissent dans le compteur **dates inconnues** et les entrées illisibles dans un compteur distinct. Les résultats ne contiennent que les correspondances confirmées. YouTube peut omettre certaines vidéos indisponibles du listing. Si une continuation échoue, la feuille signale la couverture partielle et conserve les correspondances déjà trouvées. Le filtre par date d’ajout est absent, car la route réutilisée ne fournit pas cette information de façon fiable.
+Le mode publication utilise le jour civil de publication fourni explicitement par YouTube. Les entrées sans date disponible apparaissent dans le compteur **dates inconnues** et les entrées illisibles dans un compteur distinct. Les résultats ne contiennent que les correspondances confirmées. YouTube peut omettre certaines vidéos indisponibles du listing. Si une continuation échoue, la feuille signale la couverture partielle et conserve les correspondances déjà trouvées.
 
 ## Intégration et attribution
 
@@ -32,9 +41,9 @@ Depuis la racine du dépôt avec un JDK 21 dans le PATH.
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.1.0.mpp
+youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.0.mpp
 youtube/playlist-date-filter/tests/host.sh .toolchain
-tools/build-collection.sh 0.4.3 .toolchain
+tools/build-collection.sh 0.4.4 .toolchain
 ```
 
 Le build du module génère des références de compilation depuis le MPP officiel épinglé. Le runtime officiel vient de la source Morphe sélectionnée lors du patching. Le catalogue de la collection utilise le workflow de publication habituel.
