@@ -33,24 +33,41 @@ public final class BlurRuntime {
   void changed(){int n=((Number)call(revision,"getValue")).intValue();call(revision,"setValue",n+1);}
  }
  public static void scope(final Object[] args,final int which){
-  final int ci=which==2?5:4;
-  final String owner=which==0?"com.x.postdetail.c":which==1?"com.x.postdetailsheet.a":"com.x.sensitivemedia.api.c";
-  final String method=which==0?"pikoBlurOriginal_d":which==1?"pikoBlurOriginal_a":"pikoBlurOriginal_b";
+  final int composerIndex;
+  final String owner;
+  final String method;
+  switch(which){
+   case 0:
+    composerIndex=4;owner="com.x.postdetail.c";method="pikoBlurOriginal_d";break;
+   case 1:
+    composerIndex=4;owner="com.x.postdetailsheet.a";method="pikoBlurOriginal_a";break;
+   case 2:
+    composerIndex=5;owner="com.x.sensitivemedia.api.c";method="pikoBlurOriginal_b";break;
+   case 3:
+    composerIndex=3;owner="com.x.urt.items.post.g";method="pikoBlurOriginal_a";break;
+   default:
+    throw new IllegalArgumentException("Unknown media blur scope: "+which);
+  }
+  final Object composer=args[composerIndex];
   final Object value;
-  if(which==2){
-   Session current=session(args[ci]);
+  if(which==2||which==3){
+   Session current=session(composer);
    if(current==null){stat(owner,method,args);return;}
-   Row inherited=row(args[ci]);
+   Row inherited=row(composer);
+   if(which==3&&inherited!=null){stat(owner,method,args);return;}
    long id=PostIdentity.rowPostId(args[0]);
    boolean allowed=PostIdentity.mediaAllowed(inherited==null?null:inherited.mediaAllowed,id,current.rootId);
-   value=call(rowLocal(),"a",new Row(allowed,inherited==null&&id==current.rootId));
+   value=call(rowLocal(),"a",new Row(allowed,which==2&&inherited==null&&id==current.rootId));
   }else{
-   Object model=args[which==0?1:0];if(which==1)model=field(model,"f");
+   Object model=which==0?args[1]:field(args[0],"f");
    Session current=SESSIONS.get(model);if(current==null){current=new Session(model);SESSIONS.put(model,current);}
    value=call(local(),"a",current);
   }
-  Function2<Object,Object,Object> content=new Function2<Object,Object,Object>(){public Object invoke(Object c,Object flags){Object[] next=args.clone();next[ci]=c;next[ci+1]=((Integer)next[ci+1])|1;stat(owner,method,next);return unit();}};
-  stat("androidx.compose.runtime.i","c",value,content,args[ci],0);
+  Function2<Object,Object,Object> content=new Function2<Object,Object,Object>(){public Object invoke(Object c,Object flags){
+   Object[] next=args.clone();next[composerIndex]=c;next[composerIndex+1]=((Integer)next[composerIndex+1])|1;
+   stat(owner,method,next);return unit();
+  }};
+  stat("androidx.compose.runtime.i","c",value,content,composer,0);
  }
  /** Null return means: do not alter any caller parameter, flags, or default masks. */
  public static Object media(Object model,Object modifier,Object composer){

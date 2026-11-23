@@ -37,6 +37,8 @@ public final class InAppMediaBlurPatch {
         "Ldev/chrisbanes/haze/a1;Lcom/x/photoeditor/tools/collage/i;" + MODIFIER + COMPOSER + "I)V";
     private static final String HEADER = "Lcom/x/sensitivemedia/api/c;->b(Lcom/x/urt/items/post/e6;" +
         "Landroidx/compose/foundation/layout/c3;Lcom/x/urt/items/post/k6;" + CLICK + MODIFIER + COMPOSER + "I)V";
+    private static final String POST_BODY = "Lcom/x/urt/items/post/g;->a(Lcom/x/urt/items/post/e6;" +
+        "Landroidx/compose/foundation/layout/c3;" + MODIFIER + COMPOSER + "I)V";
     private static final String IMAGE = "Lcom/x/ui/common/media/a;->a(Lcom/x/models/v4;" +
         "Lcom/x/ui/common/media/u1;Landroidx/compose/ui/layout/r;" + MODIFIER + COMPOSER + "I)V";
     private static final String VIDEO = "Lcom/x/ui/common/media/i1;->d(Lcom/x/models/c5;" +
@@ -75,7 +77,7 @@ public final class InAppMediaBlurPatch {
 
     private static final BytecodePatch PATCH = PatchKt.bytecodePatch(
             "NewX: In-App Media Blur",
-            "Experimental media blur in replies, with a toggle in the native post header.",
+            "Blurs media in replies, with a toggle in the native post header.",
             false, patch -> {
         try {
             PatchBuilder.class.getMethod("compatibleWith", kotlin.Pair[].class).invoke(patch,
@@ -136,6 +138,7 @@ public final class InAppMediaBlurPatch {
         MutableMethod detail = method(context, DETAIL);
         MutableMethod sheet = method(context, SHEET);
         MutableMethod header = method(context, HEADER);
+        MutableMethod postBody = method(context, POST_BODY);
         MutableMethod image = method(context, IMAGE);
         MutableMethod video = method(context, VIDEO);
         MutableMethod gif = method(context, GIF);
@@ -145,13 +148,15 @@ public final class InAppMediaBlurPatch {
         wrap(context, detail, 0, "Landroidx/compose/material3/i6;", 1);
         wrap(context, sheet, 1, "Lcom/x/postdetailsheet/g;", 3);
         wrap(context, header, 2, "Landroidx/compose/material3/j6;", 1);
+        // This renderer is also called directly by reply rows, without the header provider.
+        wrap(context, postBody, 3, "Lcom/x/ui/common/toasts/c;", 1);
         hookMedia(image, 3, 4, 5, -1);
         hookMedia(video, 5, 14, 15, 17);
         hookMedia(gif, 1, 5, 6, 7);
         I.addInstructions(surface, 0,
             "move/from16 v0, p2\nmove-object/from16 v1, p3\n" +
             "invoke-static {v0, v1}, " + R + "->surface(I" + OBJECT + ")I\nmove-result p2");
-        System.out.println("Media Blur: detail and sheet scopes, native Ask Grok header, image/video/GIF renderers and Media3 surface");
+        System.out.println("Media Blur: detail and sheet scopes, native Ask Grok header, reply body, image/video/GIF renderers and Media3 surface");
     }
 
     private static void hookHeader(BytecodePatchContext context, MutableMethod header) {

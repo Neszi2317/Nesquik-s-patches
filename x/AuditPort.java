@@ -71,6 +71,20 @@ class AuditPort {
             "Appel manquant: " + prefix + " depuis " + from);
     }
 
+    private void nativeCall(String caller, String target) {
+        for (Method method : methods.values()) {
+            if (!method.toString().startsWith(caller) || method.getImplementation() == null) continue;
+            for (var instruction : method.getImplementation().getInstructions()) {
+                if (instruction instanceof ReferenceInstruction ref && ref.getReference() instanceof MethodReference
+                    && ref.getReference().toString().startsWith(target)) {
+                    System.out.println(caller + " → " + target);
+                    return;
+                }
+            }
+        }
+        throw new AssertionError("Appel natif manquant : " + caller + " → " + target);
+    }
+
     private void check() {
         String timeline = NEWX + "timeline/NewXTimelineFilter;->filterTimelineItems(";
         callCount(NEWX + "hidesensitive/SensitivePostFilter;->filter(", timeline, 1);
@@ -82,7 +96,13 @@ class AuditPort {
         hasCall(NEWX + "profileimages/ProfileImages;->substitute(", "Lcoil3/request/");
         hasCall(NEWX + "profileimages/ProfileImages;->substitute(", "Lcom/bumptech/glide/");
 
-        callCount(BLUR + "scope(", "Lcom/x/", 3);
+        callCount(BLUR + "scope(", "Lcom/x/", 4);
+        callCount(BLUR + "scope(", "Lcom/x/urt/items/post/g;->a(", 1);
+        String postBody = "(Lcom/x/urt/items/post/e6;Landroidx/compose/foundation/layout/c3;" +
+            "Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V";
+        nativeCall("Lcom/x/urt/items/post/b1;->invoke(", "Lcom/x/urt/items/post/g;->a" + postBody);
+        nativeCall("Lcom/x/ui/common/toasts/c;->invoke(", "Lcom/x/urt/items/post/g;->pikoBlurOriginal_a" + postBody);
+        nativeCall("Lcom/x/urt/items/post/g;->pikoBlurOriginal_a(", "Lcom/x/ui/common/media/i1;->e(");
         callCount(BLUR + "media(", "Lcom/x/ui/common/media/", 3);
         callCount(BLUR + "surface(", "Lcom/google/android/gms/internal/mlkit_vision_text_common/sd;", 1);
         callCount(BLUR + "headerVisible(", "Lcom/x/sensitivemedia/api/c;->pikoBlurOriginal_b(", 1);

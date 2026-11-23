@@ -24,6 +24,18 @@ for test in SessionStateTest PostIdentityTest app.morphe.extension.newx.hidesens
     java -cp "$build/core:$runtime_cp" "$test"
 done
 
+mkdir -p "$build/blur"
+mapfile -d '' -t blur_fixtures < <(find blur-tests/fixtures -name '*.java' -print0)
+compile -cp "$build/core:$runtime_cp" -d "$build/blur" "${blur_fixtures[@]}"
+blur_cp="$build/blur:$build/core:$runtime_cp"
+java -cp "$blur_cp" BlurScopeTest
+if java -Dblur.test.beforeReplyScope=true -cp "$blur_cp" BlurScopeTest > "$build/blur-before.log" 2>&1; then
+    echo "The reply regression test must fail when the old render route bypasses the scope." >&2
+    exit 1
+fi
+grep -Fq 'AssertionError: Reply body receives the blur modifier' "$build/blur-before.log"
+echo 'PASS the old reply render route reproduces unblurred media after the button press'
+
 mapfile -d '' -t advanced < <(find advanced-tests/app -name '*.java' -print0)
 compile -cp "$runtime_cp" -d "$build/advanced" "${advanced[@]}"
 java -cp "$build/advanced:$tools/json.jar:$runtime_cp" app.morphe.extension.newx.postfilter.AdvancedFilterTests
