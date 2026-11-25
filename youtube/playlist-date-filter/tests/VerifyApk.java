@@ -1,13 +1,18 @@
 import com.android.apksig.ApkVerifier;
 import com.android.tools.smali.dexlib2.DexFileFactory;
+import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Method;
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class VerifyApk {
@@ -19,6 +24,8 @@ class VerifyApk {
 
     public static void main(String[] args) throws Exception {
         File apk = new File(args[0]);
+        boolean tablet = args.length > 1 && args[1].equals("21.47.483");
+        String completion = tablet ? "Lalyr;->n(Lalos;Ljava/lang/Object;)V" : "Lalcm;->n(Laksp;Ljava/lang/Object;)V";
         var signature = new ApkVerifier.Builder(apk).build().verify();
         if (!signature.isVerified()) throw new AssertionError(signature.getErrors());
 
@@ -69,7 +76,7 @@ class VerifyApk {
                         if (ref.getDefiningClass().equals("Lfr/nesquik/playlistdate/WatchLaterEvents;")) {
                             switch (ref.getName()) {
                                 case "nativeResponse" -> {
-                                    if (!method.toString().equals("Lalcm;->n(Laksp;Ljava/lang/Object;)V")) {
+                                    if (!method.toString().equals(completion)) {
                                         throw new AssertionError("Unexpected native playlist confirmation caller " + method);
                                     }
                                     nativeConfirmations++;
@@ -98,10 +105,42 @@ class VerifyApk {
             throw new AssertionError("Watch later hooks: " + nativeConfirmations + " / " + morpheConfirmations + " / " + morpheBodies);
         }
         if (takeoutStores != 1) throw new AssertionError("Unexpected Takeout store paths: " + takeoutStores);
+        if (tablet) verifyRoundedCaptions(classes);
         System.out.println("Watch later: one native completion hook and two Morphe request paths.");
         System.out.println("Takeout picker writes to the local store without invoking the playlist client.");
         System.out.println("APK signature valid. One playlist toolbar hook and one dialog redirection.");
         System.out.println(linkedReferences + " official runtime references resolved. No duplicate Dex classes.");
+    }
+
+    private static void verifyRoundedCaptions(Map<String, ClassDef> classes) {
+        var layout = methodInstructions(classes.get("Latdz;"), "onLayout");
+        var flag = layout.get(53);
+        if (!(flag instanceof NarrowLiteralInstruction literal)
+                || flag.getOpcode() != Opcode.CONST_4 || literal.getNarrowLiteral() != 1
+                || layout.get(54).getOpcode() != Opcode.IF_EQZ) {
+            throw new AssertionError("Rounded subtitle background branch is inactive");
+        }
+        var measure = methodInstructions(
+                classes.get("Lcom/google/android/libraries/youtube/player/subtitles/ui/SubtitleWindowView;"), "onMeasure");
+        for (int index : new int[] {82, 124}) {
+            if (!(measure.get(index) instanceof ReferenceInstruction read)
+                    || !read.getReference().toString().equals("Landroid/text/Layout$Alignment;->ALIGN_CENTER:Landroid/text/Layout$Alignment;")
+                    || !(measure.get(index + 1) instanceof ReferenceInstruction write)
+                    || !write.getReference().toString().equals("Latdz;->a:Landroid/text/Layout$Alignment;")) {
+                throw new AssertionError("Missing centered subtitle alignment at " + index);
+            }
+        }
+        System.out.println("Rounded subtitles: native path enabled and both alignments centered.");
+    }
+
+    private static List<Instruction> methodInstructions(ClassDef cls, String name) {
+        for (Method method : cls.getMethods()) {
+            if (!method.getName().equals(name)) continue;
+            var instructions = new ArrayList<Instruction>();
+            method.getImplementation().getInstructions().forEach(instructions::add);
+            return instructions;
+        }
+        throw new AssertionError("Missing caption method " + name);
     }
 
     private static void verifyMethod(Map<String, ClassDef> classes, MethodReference ref) {

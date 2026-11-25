@@ -1,12 +1,12 @@
 # YouTube Playlist Search & Date Filter
 
-Version du module **0.2.2**, dans **Nesquik’s patches 0.4.6**. La cible déclarée est YouTube **21.30.216** avec la source officielle Morphe **2.4.0-dev.9**.
+Version du module **0.2.3**, dans **Nesquik’s patches 0.4.7**.
 
 ## Installation
 
 1. Dans Morphe Manager, mets à jour la source « Nesquik’s patches ». Son [catalogue](https://raw.githubusercontent.com/Neszi2317/Nesquik-s-patches/refs/heads/main/patches-bundle.json) distribue le bundle de la collection.
-2. Ajoute ou active la variante de développement des patchs officiels qui contient **Playlist search**. La version validée pour ce module est [2.4.0-dev.9](https://github.com/MorpheApp/morphe-patches/releases/tag/v2.4.0-dev.9). Tu peux importer son MPP localement pour épingler la version.
-3. Dans la même opération de patching de YouTube **21.30.216**, sélectionne **Playlist search** dans la source officielle et **YouTube: Playlist Search & Date Filter** dans la source Nesquik. Pour une installation sans root, sélectionne également le support GmsCore selon ton installation habituelle.
+2. Sélectionne **Playlist search** dans Morphe Patches et la variante correspondante dans la source Nesquik. Pour une installation sans root, sélectionne également le support GmsCore selon ton installation habituelle.
+3. Sur **21.30.216**, utilise **YouTube: Playlist Search & Date Filter** avec [Morphe 2.4.0-dev.9](https://github.com/MorpheApp/morphe-patches/releases/tag/v2.4.0-dev.9). Sur **21.47.483**, utilise **YouTube: Playlist Search & Date Filter (21.47.483)** avec [Morphe 2.4.0-dev.12](https://github.com/MorpheApp/morphe-patches/releases/tag/v2.4.0-dev.12).
 4. Ouvre une playlist et touche sa loupe Morphe, à côté de la recherche générale YouTube. Dans **Rechercher dans la playlist**, saisis un texte, une date ou les deux, puis touche **Rechercher**.
 5. Pour retrouver la recherche textuelle habituelle, ouvre la même boîte de dialogue, touche **Effacer les dates**, puis **Rechercher**. **Annuler** abandonne les changements de la boîte de dialogue.
 
@@ -41,9 +41,9 @@ Depuis la racine du dépôt avec un JDK 21 dans le PATH.
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.2.mpp
+youtube/playlist-date-filter/build.sh .toolchain dist/YouTube-Playlist-Search-Date-Filter-0.2.3.mpp
 youtube/playlist-date-filter/tests/host.sh .toolchain
-tools/build-collection.sh 0.4.6 .toolchain
+tools/build-collection.sh 0.4.7 .toolchain
 ```
 
 Le build du module génère des références de compilation depuis le MPP officiel épinglé. Le runtime officiel vient de la source Morphe sélectionnée lors du patching. Le catalogue de la collection utilise le workflow de publication habituel.

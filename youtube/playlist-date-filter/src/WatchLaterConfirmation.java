@@ -29,7 +29,7 @@ final class WatchLaterConfirmation {
     }
 
     static Map<String, String> fromNative(Object request, Object response) throws ReflectiveOperationException {
-        // Pinned 21.30.216 schema. The bytecode patch checks these descriptors before injecting.
+        // Both supported builds use the same field names. The patch checks their per-build descriptors.
         if (!"WL".equals(field(request, "d")) || (int) field(response, "d") != 1) return Map.of();
         Set<String> requested = new HashSet<>();
         for (Object action : (List<?>) field(request, "e")) {

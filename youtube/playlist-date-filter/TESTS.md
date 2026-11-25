@@ -1,4 +1,30 @@
-# Vérifications de la version 0.2.2
+# Vérifications du filtre de dates
+
+## Version 0.2.3
+
+| APK YouTube | Morphe Patches | Vérification |
+| --- | --- | --- |
+| 21.30.216 | 2.4.0-dev.9 | Patching et signature avec le patch historique. Une redirection de dialogue, une confirmation native et deux chemins d’ajout Morphe. |
+| 21.47.483 | 2.4.0-dev.12 | Patching et signature avec les deux patchs de la tablette. Même vérification de la recherche et des confirmations. Le tracé arrondi et les deux alignements centrés sont présents dans le DEX. |
+| 21.46.522 | — | Patching et signature de la variante des sous-titres arrondis. |
+
+Les 67 assertions JVM de la suite historique passent. Les résultats de recherche sur un compte privé et l’affichage sur la tablette restent à vérifier en utilisation réelle.
+
+Pour reproduire le test 21.47.483 avec le bundle complet, utilise le MPP officiel 2.4.0-dev.12.
+
+```sh
+java -jar .toolchain/morphe.jar patch --exclusive --validate --bytecode-mode FULL \
+  -p patches-2.4.0-dev.12.mpp -e 'Playlist search' -e 'GmsCore support' \
+  -e 'Save to Watch later' -e 'Feed video actions' \
+  -p bundles/Nesquiks-patches-0.4.7.mpp -e 'YouTube: Playlist Search & Date Filter (21.47.483)' \
+  -e 'Rounded YouTube Captions (21.47.483)' \
+  -o out-21.47.483.apk -r patch-report.json youtube-21.47.483.apk
+
+java -Xmx3g -cp .toolchain/morphe.jar \
+  youtube/playlist-date-filter/tests/VerifyApk.java out-21.47.483.apk 21.47.483
+```
+
+## Version 0.2.2
 
 La cible reste YouTube **21.30.216** et Morphe **2.4.0-dev.9**. La validation de la version précédente est disponible dans la [release 0.4.3](https://github.com/Neszi2317/Nesquik-s-patches/blob/v0.4.3/youtube/playlist-date-filter/TESTS.md).
 

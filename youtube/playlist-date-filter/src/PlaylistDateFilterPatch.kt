@@ -34,11 +34,38 @@ private val dialogArguments = listOf(
     "Landroid/content/Context;", "Ljava/lang/String;", "Ljava/util/function/Consumer;",
 )
 
+private data class PlaylistEditSchema(
+    val completion: String,
+    val callbackRequest: String,
+    val request: String,
+    val action: String,
+    val response: String,
+    val result: String,
+    val addedVideo: String,
+    val repeatedField: String,
+)
+
 @Suppress("unused")
-val playlistDateFilter = bytecodePatch(
-    name = "YouTube: Playlist Search & Date Filter",
+val playlistDateFilter = playlistDateFilterPatch(
+    "YouTube: Playlist Search & Date Filter", "21.30.216", "2.4.0-dev.9",
+    PlaylistEditSchema("Lalcm;", "Laksp;", "Lbfpk;", "Lbjbp;", "Lbfpl;", "Lbfpo;", "Lbfpp;", "Lbadh;"),
+)
+
+@Suppress("unused")
+val playlistDateFilter2147483 = playlistDateFilterPatch(
+    "YouTube: Playlist Search & Date Filter (21.47.483)", "21.47.483", "2.4.0-dev.12",
+    PlaylistEditSchema("Lalyr;", "Lalos;", "Lbhsv;", "Lbljr;", "Lbhsw;", "Lbhsz;", "Lbhta;", "Lbcch;"),
+)
+
+private fun playlistDateFilterPatch(
+    name: String,
+    version: String,
+    officialVersion: String,
+    edit: PlaylistEditSchema,
+) = bytecodePatch(
+    name = name,
     description = "Adds publication and Watch later addition-date filters to the official Playlist search dialog. " +
-        "Imports Takeout dates and records confirmed Watch later additions locally. Select official Playlist search (2.4.0-dev.9).",
+        "Imports Takeout dates and records confirmed Watch later additions locally. Select official Playlist search ($officialVersion).",
     default = false,
 ) {
     compatibleWith(Compatibility(
@@ -46,19 +73,21 @@ val playlistDateFilter = bytecodePatch(
         packageName = "com.google.android.youtube",
         apkFileType = ApkFileType.APK,
         appIconColor = 0xFF0033,
-        targets = listOf(AppTarget(version = "21.30.216")),
+        targets = listOf(AppTarget(version = version)),
     ))
 
     extendWith("extensions/nesquik-playlist-date.dex")
 
     finalize {
+        if (packageMetadata.versionName != version) return@finalize
+
         val actionBar = PlaylistActionBar.method.implementation!!.instructions
         val officialIsEnabled = actionBar.any {
             val method = (it as? ReferenceInstruction)?.reference as? MethodReference
             method?.definingClass == OFFICIAL && method.name == "addSearchMenuItem"
         }
         if (!officialIsEnabled) {
-            throw PatchException("Select the official Morphe Playlist search patch (2.4.0-dev.9).")
+            throw PatchException("Select the official Morphe Playlist search patch ($officialVersion).")
         }
 
         val method = mutableClassDefBy(OFFICIAL).methods.single { it.name == "showSearchDialog" }
@@ -68,7 +97,7 @@ val playlistDateFilter = bytecodePatch(
             val target = call?.reference as? MethodReference
             call?.opcode == Opcode.INVOKE_STATIC && target?.definingClass == DIALOG &&
                 target.name == "show" && target.parameterTypes.map(CharSequence::toString) == dialogArguments
-        } ?: throw PatchException("Unsupported official Playlist search dialog. Use Morphe patches 2.4.0-dev.9.")
+        } ?: throw PatchException("Unsupported official Playlist search dialog. Use Morphe patches $officialVersion.")
 
         // The original consumer captures the activity and playlist ID immediately before show().
         val show = instructions[callIndex] as Instruction35c
@@ -79,7 +108,7 @@ val playlistDateFilter = bytecodePatch(
             constructor?.name != "<init>" || constructor.parameterTypes.map(CharSequence::toString) !=
                 listOf("Landroid/app/Activity;", "Ljava/lang/String;")
         ) {
-            throw PatchException("Unsupported Playlist search callback. Use Morphe patches 2.4.0-dev.9.")
+            throw PatchException("Unsupported Playlist search callback. Use Morphe patches $officialVersion.")
         }
         val args = "v${show.registerC}, v${show.registerD}, v${show.registerE}, v${capture.registerE}"
         method.replaceInstruction(callIndex,
@@ -90,11 +119,11 @@ val playlistDateFilter = bytecodePatch(
         // The native edit handler receives a typed response after the request completes.
         // Pin the descriptor and verify the casts and fields used by the runtime reader.
         val schema = mapOf(
-            "Lbfpk;" to mapOf("d" to "Ljava/lang/String;", "e" to "Lbadh;"),
-            "Lbjbp;" to mapOf("d" to "I", "e" to "Ljava/lang/String;"),
-            "Lbfpl;" to mapOf("d" to "I", "j" to "Lbadh;"),
-            "Lbfpo;" to mapOf("b" to "I", "c" to "Ljava/lang/Object;"),
-            "Lbfpp;" to mapOf("c" to "Ljava/lang/String;", "d" to "Ljava/lang/String;"),
+            edit.request to mapOf("d" to "Ljava/lang/String;", "e" to edit.repeatedField),
+            edit.action to mapOf("d" to "I", "e" to "Ljava/lang/String;"),
+            edit.response to mapOf("d" to "I", "j" to edit.repeatedField),
+            edit.result to mapOf("b" to "I", "c" to "Ljava/lang/Object;"),
+            edit.addedVideo to mapOf("c" to "Ljava/lang/String;", "d" to "Ljava/lang/String;"),
         )
         for ((type, fields) in schema) {
             val cls = classDefByOrNull(type) ?: throw PatchException("Unexpected YouTube playlist response type $type")
@@ -103,19 +132,19 @@ val playlistDateFilter = bytecodePatch(
             }
         }
 
-        val outcome = mutableClassDefByOrNull("Lalcm;")?.methods?.singleOrNull {
+        val outcome = mutableClassDefByOrNull(edit.completion)?.methods?.singleOrNull {
             it.name == "n" && it.parameterTypes.map(CharSequence::toString) ==
-                listOf("Laksp;", "Ljava/lang/Object;") && it.returnType == "V"
-        } ?: throw PatchException("Unsupported YouTube playlist edit completion. Use YouTube 21.30.216.")
+                listOf(edit.callbackRequest, "Ljava/lang/Object;") && it.returnType == "V"
+        } ?: throw PatchException("Unsupported YouTube playlist edit completion for $version.")
         val nativeInstructions = outcome.implementation!!.instructions
         val responseRegister = outcome.implementation!!.registerCount - 1
         val responseCast = nativeInstructions.first()
         val requestCast = nativeInstructions.getOrNull(6)
         if (responseCast.opcode != Opcode.CHECK_CAST ||
-            ((responseCast as? ReferenceInstruction)?.reference as? TypeReference)?.type != "Lbfpl;" ||
+            ((responseCast as? ReferenceInstruction)?.reference as? TypeReference)?.type != edit.response ||
             (responseCast as OneRegisterInstruction).registerA != responseRegister ||
             requestCast?.opcode != Opcode.CHECK_CAST ||
-            ((requestCast as? ReferenceInstruction)?.reference as? TypeReference)?.type != "Lbfpk;") {
+            ((requestCast as? ReferenceInstruction)?.reference as? TypeReference)?.type != edit.request) {
             throw PatchException("Unexpected YouTube playlist edit completion layout.")
         }
         val requestRegister = (requestCast as OneRegisterInstruction).registerA
@@ -131,7 +160,7 @@ val playlistDateFilter = bytecodePatch(
         for (name in listOf("SaveToWatchLaterRequest", "EditPlaylistRequest")) {
             val direct = mutableClassDefBy(REQUEST_CLASSES + name + ";").methods.singleOrNull { candidate ->
                 candidate.name == "sendRequest" && candidate.parameterTypes.firstOrNull() == "Ljava/lang/String;"
-            } ?: throw PatchException("Unsupported Morphe Watch later response. Use 2.4.0-dev.9.")
+            } ?: throw PatchException("Unsupported Morphe Watch later response. Use $officialVersion.")
             val directInstructions = direct.implementation!!.instructions
             val bodyIndex = directInstructions.indices.singleOrNull { index ->
                 val call = directInstructions[index] as? Instruction35c
