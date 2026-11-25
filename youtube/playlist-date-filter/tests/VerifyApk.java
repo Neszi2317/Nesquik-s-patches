@@ -122,14 +122,19 @@ class VerifyApk {
         }
         var measure = methodInstructions(
                 classes.get("Lcom/google/android/libraries/youtube/player/subtitles/ui/SubtitleWindowView;"), "onMeasure");
-        for (int index : new int[] {82, 124}) {
-            if (!(measure.get(index) instanceof ReferenceInstruction read)
+        int centered = 0;
+        for (int index = 1; index < measure.size(); index++) {
+            if (measure.get(index).getOpcode() != Opcode.IPUT_OBJECT
+                    || !(measure.get(index) instanceof ReferenceInstruction write)
+                    || !write.getReference().toString().equals("Latdz;->a:Landroid/text/Layout$Alignment;")) continue;
+            if (!(measure.get(index - 1) instanceof ReferenceInstruction read)
                     || !read.getReference().toString().equals("Landroid/text/Layout$Alignment;->ALIGN_CENTER:Landroid/text/Layout$Alignment;")
-                    || !(measure.get(index + 1) instanceof ReferenceInstruction write)
-                    || !write.getReference().toString().equals("Latdz;->a:Landroid/text/Layout$Alignment;")) {
+                    || measure.get(index - 1).getOpcode() != Opcode.SGET_OBJECT) {
                 throw new AssertionError("Missing centered subtitle alignment at " + index);
             }
+            centered++;
         }
+        if (centered != 2) throw new AssertionError("Expected two centered subtitle assignments, found " + centered);
         System.out.println("Rounded subtitles: native path enabled and both alignments centered.");
     }
 

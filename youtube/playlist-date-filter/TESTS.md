@@ -4,11 +4,11 @@
 
 | APK YouTube | Morphe Patches | Vérification |
 | --- | --- | --- |
-| 21.30.216 | 2.4.0-dev.9 | Patching et signature avec le patch historique. Une redirection de dialogue, une confirmation native et deux chemins d’ajout Morphe. |
+| 21.30.216 | 2.4.0-dev.9 et dev.12 | Patching et signature avec le patch historique. Une redirection de dialogue, une confirmation native et deux chemins d’ajout Morphe. |
 | 21.47.483 | 2.4.0-dev.12 | Patching et signature avec les deux patchs de la tablette. Même vérification de la recherche et des confirmations. Le tracé arrondi et les deux alignements centrés sont présents dans le DEX. |
 | 21.46.522 | — | Patching et signature de la variante des sous-titres arrondis. |
 
-Les 67 assertions JVM de la suite historique passent. Les résultats de recherche sur un compte privé et l’affichage sur la tablette restent à vérifier en utilisation réelle.
+Les 67 assertions JVM de la suite historique passent. Un second essai sur 21.47.483 a appliqué 130 patchs, dont les deux corrections, avec les réglages par défaut des sources et la recherche de playlist activée. Les résultats sur un compte privé et l’affichage sur la tablette restent à vérifier en utilisation réelle.
 
 Pour reproduire le test 21.47.483 avec le bundle complet, utilise le MPP officiel 2.4.0-dev.12.
 
