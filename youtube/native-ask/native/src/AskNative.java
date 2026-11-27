@@ -22,6 +22,7 @@ public final class AskNative {
     static volatile byte[] genuineFullscreenVisual;
     private static volatile boolean directFullscreen;
     private static boolean currentFullscreen;
+    private static boolean playerKeyboardRequested, watchKeyboardPending;
     private static final ThreadLocal<Boolean> fullscreenPanel = new ThreadLocal<>();
     private static volatile int quickSeen, quickChanged, quickNative;
     private static final String OFFICIAL = "app.morphe.extension.youtube.patches.ask.AskFlyoutMenuPatch";
@@ -602,7 +603,7 @@ public final class AskNative {
                 if(popup!=null)Class.forName(OFFICIAL+"$MenuAccess").getMethod("patch_dismissPopup").invoke(popup);
             }catch(Exception ignored){}
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                try{directFullscreen=false;directVideo=id;directTime=SystemClock.uptimeMillis();open.invoke(null,id);}
+                try{playerKeyboardRequested=false;directFullscreen=false;directVideo=id;directTime=SystemClock.uptimeMillis();open.invoke(null,id);}
                 catch(Exception e){Log.e("AskNative","Native menu opening failed",e);}
             },150);
             return true;
@@ -907,7 +908,7 @@ public final class AskNative {
             // Finish native tap callbacks before opening the engagement panel.
             new Handler(Looper.getMainLooper()).post(() -> {
                 try {
-                    directFullscreen=fullscreen; directVideo = id; directTime = SystemClock.uptimeMillis();
+                    playerKeyboardRequested=!fullscreen; directFullscreen=fullscreen; directVideo = id; directTime = SystemClock.uptimeMillis();
                     open.invoke(null, id);
                 } catch (Exception ex) { Log.e("AskNative", "Official Ask opening failed", ex); }
             });
@@ -922,6 +923,7 @@ public final class AskNative {
         boolean direct = id.equals(directVideo) && SystemClock.uptimeMillis() - directTime <= 15000;
         currentDirectVideo = direct ? id : null;
         currentFullscreen=direct && directFullscreen;
+        watchKeyboardPending = direct && playerKeyboardRequested;
         fullscreenPanel.remove();
         if (direct) directVideo = null;
         directPanelVideo.remove();
@@ -952,6 +954,17 @@ public final class AskNative {
             }
             Log.i("AskNative", "Opening current-video Ask without automatic summary");
         } catch (Exception ex) { Log.e("AskNative", "Could not disable automatic summary", ex); }
+    }
+    public static void onPanelOpen(String id) {
+        if (id != null && !"PAyouchat".equals(id)) WatchKeyboard.stop();
+    }
+    public static void onPanelClose(String id) {
+        if ("PAyouchat".equals(id)) WatchKeyboard.stop();
+    }
+    public static void afterPanelOpened() {
+        WatchKeyboard.stop();
+        if (watchKeyboardPending) WatchKeyboard.open();
+        watchKeyboardPending = false;
     }
     public static byte[] adaptPanelCommand(byte[] command) {
         String video = directPanelVideo.get();

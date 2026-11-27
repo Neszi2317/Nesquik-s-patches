@@ -8,7 +8,7 @@ BUILD="$NATIVE_DIR/build"
 # Prevent stale unit-test classes or prior bundle entries entering the deliverable.
 rm -rf "$BUILD/classes" "$BUILD/patches" "$BUILD/bundle"
 mkdir -p "$BUILD/classes" "$BUILD/patches" "$BUILD/bundle/extensions" "$NATIVE_DIR/dist"
-"$JDK/bin/javac" --release 11 -cp "$TC/android.jar" -d "$BUILD/classes" "$NATIVE_DIR/src/AskNative.java"
+"$JDK/bin/javac" --release 11 -cp "$TC/android.jar" -d "$BUILD/classes" "$NATIVE_DIR/src/AskNative.java" "$NATIVE_DIR/src/WatchKeyboard.java"
 "$JDK/bin/jar" cf "$BUILD/helper.jar" -C "$BUILD/classes" .
 "$JDK/bin/java" -cp "$TC/r8.jar" com.android.tools.r8.D8 --release --min-api 28 --lib "$TC/android.jar" --output "$BUILD/bundle/extensions" "$BUILD/helper.jar"
 mv "$BUILD/bundle/extensions/classes.dex" "$BUILD/bundle/extensions/ask-native.dex"
@@ -20,13 +20,13 @@ cat > "$BUILD/MANIFEST.MF" <<MANIFEST
 Manifest-Version: 1.0
 Name: Ask Native Action Bar
 Description: Native Elements action button with official Ask panel opening
-Version: 0.8.3
+Version: 0.8.4
 Patcher-Version: 2.0.0
 Author: Neszi2317
 License: GPLv3
 Source: https://github.com/Neszi2317/Rounded-Subtiles
 
 MANIFEST
-"$JDK/bin/jar" cfm "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.3.mpp" "$BUILD/MANIFEST.MF" -C "$BUILD/bundle" .
+"$JDK/bin/jar" cfm "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.4.mpp" "$BUILD/MANIFEST.MF" -C "$BUILD/bundle" .
 # Manager's JVM host is Java17 even on recent Android. Do not regress to Java21.
-python3 "$NATIVE_DIR/tests/verify_java17.py" "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.3.mpp"
+python3 "$NATIVE_DIR/tests/verify_java17.py" "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.4.mpp"

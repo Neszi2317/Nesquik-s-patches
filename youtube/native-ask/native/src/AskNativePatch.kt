@@ -135,6 +135,13 @@ val askNativeAction = bytecodePatch(
         }
         if(panelExecute<0) throw PatchException("Official panel command executor call missing")
         val panelBytes=show.getInstruction<FiveRegisterInstruction>(panelExecute).registerD
+        show.addInstruction(panelExecute + 1, "invoke-static {}, $HELPER->afterPanelOpened()V")
+        // When Morphe tracks panel navigation, also disarm on an in-place switch.
+        val tracker = runCatching { mutableClassDefBy("Lapp/morphe/extension/youtube/shared/EngagementPanel;") }.getOrNull()
+        tracker?.methods?.filter { it.name in setOf("open", "close") && it.parameterTypes == listOf("Ljava/lang/String;") }?.forEach {
+            val callback = if (it.name == "open") "onPanelOpen" else "onPanelClose"
+            it.addInstruction(0, "invoke-static/range { p0 .. p0 }, $HELPER->$callback(Ljava/lang/String;)V")
+        }
         show.addInstructions(panelExecute,"""
             invoke-static/range { v$panelBytes .. v$panelBytes }, $HELPER->adaptPanelCommand([B)[B
             move-result-object v$panelBytes
