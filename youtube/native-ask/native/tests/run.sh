@@ -20,7 +20,7 @@ mkdir -p "$ND/build/tests"
 
 "$JDK/bin/java" -cp "$ND/build/tests:$ND/build/classes" app.neszi.asknative.MenuCaptureTest
 
-"$JDK/bin/java" -cp "$ND/build/tests:$ND/build/classes" app.neszi.asknative.MinimalLayoutTest
+"$JDK/bin/java" -cp "$ND/build/tests:$ND/build/classes:$TC/android.jar" app.neszi.asknative.MinimalLayoutTest
 
 "$JDK/bin/javac" --release 11 -cp "$ND/build/classes:$TC/android.jar" -d "$ND/build/tests" "$ND/tests/WatchKeyboardTest.java"
 "$JDK/bin/java" -cp "$ND/build/tests:$ND/build/classes:$TC/android.jar" app.neszi.asknative.WatchKeyboardTest

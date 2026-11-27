@@ -8,7 +8,7 @@ Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **F
 | --- | --- | --- |
 | X | Filtre avancé de mots-clés, masquage des posts sensibles, avatars et bannières, Anonymous Names, flou des médias, masquage permanent par identifiant | 12.43.0-prod.01 |
 | Reddit | Filtre local de mots-clés, masquage NSFW, accueil personnalisé | 2026.47.0, 2026.48.0 |
-| YouTube | Ask Native Action Bar 0.8.4 | 21.20.405, 21.30.216, 21.42.241, 21.44.528, 21.47.483 |
+| YouTube | Ask Native Action Bar 0.8.5 | 21.20.405, 21.30.216, 21.42.241, 21.44.528, 21.47.483 |
 | YouTube | Bouton Gemini dans la description, expérimental | 21.30.216 |
 | YouTube | Recherche dans les playlists, expérimentale | 21.16.256 |
 | YouTube | [Playlist Search & Date Filter](youtube/playlist-date-filter), dont date d’ajout pour « À regarder plus tard » | 21.30.216, 21.47.483 |

@@ -1,30 +1,31 @@
 package app.neszi.asknative;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
-import android.util.Log;
 import java.lang.ref.WeakReference;
 
-/** Keyboard handling for the regular watch-page Ask panel on Android 11+. */
-public final class WatchKeyboard implements ViewTreeObserver.OnGlobalLayoutListener,
+/** Gives the watch page the window space above the IME while the Ask panel is open. */
+public final class WatchKeyboard implements ViewTreeObserver.OnPreDrawListener,
         View.OnAttachStateChangeListener {
     private static WeakReference<WatchKeyboard> active = new WeakReference<>(null);
     private final Activity activity;
-    private final View panel;
+    private final View content;
     private final int[] location = new int[2];
-    private int applied;
-    private static int generation;
+    private int originalHeight;
+    private int appliedHeight = -1;
 
-    private WatchKeyboard(Activity activity, View panel) {
+    private WatchKeyboard(Activity activity, View content) {
         this.activity = activity;
-        this.panel = panel;
+        this.content = content;
     }
 
     public static void stop() {
-        generation++;
         WatchKeyboard previous = active.get();
         if (previous != null) previous.remove();
         active.clear();
@@ -35,71 +36,75 @@ public final class WatchKeyboard implements ViewTreeObserver.OnGlobalLayoutListe
         try {
             Activity activity = (Activity) Class.forName("app.morphe.extension.shared.Utils")
                     .getMethod("getActivity").invoke(null);
-            if (activity == null) return;
-            int id = activity.getResources().getIdentifier("engagement_panel_wrapper", "id",
-                    activity.getPackageName());
-            if (id == 0) id = activity.getResources().getIdentifier("engagement_panel_wrapper",
-                    "id", "com.google.android.youtube");
-            if (id != 0) bindWhenShown(activity, id, generation, 30);
+            if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
+            View content = activity.findViewById(android.R.id.content);
+            if (content == null || !content.isAttachedToWindow()) return;
+            WatchKeyboard previous = active.get();
+            if (previous != null && previous.content == content) return;
+            stop();
+            WatchKeyboard watcher = new WatchKeyboard(activity, content);
+            active = new WeakReference<>(watcher);
+            content.addOnAttachStateChangeListener(watcher);
+            content.getViewTreeObserver().addOnPreDrawListener(watcher);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            Log.e("AskNative", "Watch keyboard setup failed", e);
+            Log.e("AskNative", "Could not attach watch keyboard handler", e);
         }
     }
 
-    private static void bindWhenShown(Activity activity, int id, int session, int attempts) {
-        if (session != generation || activity.isDestroyed() || activity.isFinishing()) return;
-        View panel = activity.findViewById(id);
-        if (panel == null || !panel.isAttachedToWindow() || !panel.isShown()) {
-            if (attempts > 0) activity.getWindow().getDecorView().postDelayed(
-                    () -> bindWhenShown(activity, id, session, attempts - 1), 50);
-            return;
-        }
-        WatchKeyboard watcher = new WatchKeyboard(activity, panel);
-        active = new WeakReference<>(watcher);
-        panel.addOnAttachStateChangeListener(watcher);
-        panel.getViewTreeObserver().addOnGlobalLayoutListener(watcher);
-        watcher.onGlobalLayout();
+    static int availableHeight(int windowHeight, int contentTop, int imeBottom) {
+        return Math.max(0, windowHeight - imeBottom - contentTop);
     }
 
-    static int extraPadding(int windowHeight, int panelBottom, int ime, int nav, int base) {
-        // A resized watch page may already end above all or part of the IME.
-        return Math.max(0, Math.min(ime - nav, panelBottom - base - (windowHeight - ime)));
-    }
-
-    @Override public void onGlobalLayout() {
-        if (!panel.isShown()) {
+    @Override public boolean onPreDraw() {
+        if (content.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
             remove();
-            return;
+            return true;
         }
-        WindowInsets insets = panel.getRootWindowInsets();
-        View focus = panel.findFocus();
-        int extra = 0;
-        if (focus != null && focus.onCheckIsTextEditor() && insets != null
-                && insets.isVisible(WindowInsets.Type.ime())) {
-            panel.getLocationInWindow(location);
-            int height = activity.getWindowManager().getCurrentWindowMetrics().getBounds().height();
-            extra = extraPadding(height, location[1] + panel.getHeight(),
-                    insets.getInsets(WindowInsets.Type.ime()).bottom,
-                    insets.getInsets(WindowInsets.Type.navigationBars()).bottom,
-                    Math.max(0, panel.getPaddingBottom() - applied));
+        WindowInsets insets = content.getRootWindowInsets();
+        if (insets == null || !insets.isVisible(WindowInsets.Type.ime())) {
+            restore();
+            return true;
         }
-        apply(extra);
+        int ime = insets.getInsets(WindowInsets.Type.ime()).bottom;
+        if (ime <= insets.getInsets(WindowInsets.Type.navigationBars()).bottom) {
+            restore();
+            return true;
+        }
+        ViewGroup.LayoutParams params = content.getLayoutParams();
+        if (params == null) return true;
+        if (appliedHeight != -1 && params.height != appliedHeight) appliedHeight = -1;
+        content.getLocationInWindow(location);
+        int windowHeight = activity.getWindowManager().getCurrentWindowMetrics().getBounds().height();
+        int target = availableHeight(windowHeight, location[1], ime);
+        if (target == 0 || (appliedHeight == -1 && content.getHeight() <= target)) return true;
+        if (appliedHeight == -1) originalHeight = params.height;
+        if (originalHeight >= 0) target = Math.min(target, originalHeight);
+        if (target != appliedHeight) {
+            appliedHeight = target;
+            params.height = target;
+            content.setLayoutParams(params);
+        }
+        return true;
     }
 
-    private void apply(int extra) {
-        if (extra == applied) return;
-        int base = Math.max(0, panel.getPaddingBottom() - applied);
-        applied = extra;
-        panel.setPadding(panel.getPaddingLeft(), panel.getPaddingTop(), panel.getPaddingRight(), base + extra);
+    private void restore() {
+        if (appliedHeight == -1) return;
+        ViewGroup.LayoutParams params = content.getLayoutParams();
+        if (params != null && params.height == appliedHeight) {
+            params.height = originalHeight;
+            content.setLayoutParams(params);
+        }
+        appliedHeight = -1;
     }
 
     private void remove() {
-        panel.removeOnAttachStateChangeListener(this);
-        ViewTreeObserver observer = panel.getViewTreeObserver();
-        if (observer.isAlive()) observer.removeOnGlobalLayoutListener(this);
-        apply(0);
+        content.removeOnAttachStateChangeListener(this);
+        ViewTreeObserver tree = content.getViewTreeObserver();
+        if (tree.isAlive()) tree.removeOnPreDrawListener(this);
+        restore();
+        if (active.get() == this) active.clear();
     }
 
-    @Override public void onViewAttachedToWindow(View v) {}
-    @Override public void onViewDetachedFromWindow(View v) { remove(); }
+    @Override public void onViewAttachedToWindow(View view) {}
+    @Override public void onViewDetachedFromWindow(View view) { remove(); }
 }

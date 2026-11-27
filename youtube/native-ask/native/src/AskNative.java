@@ -887,6 +887,10 @@ public final class AskNative {
             if(!marker.startsWith(PREFIX) && !marker.startsWith(FULLSCREEN_PREFIX)) {
                 byte[] opening=findWatchPresentation(commandBytes,0);
                 Context ctx=context();
+                if (opening != null && ctx != null && ctx.getResources().getConfiguration().orientation == 1) {
+                    // Genuine Ask buttons keep their native command and bypass openAskPanel().
+                    WatchKeyboard.open();
+                }
                 if(opening!=null && !tablet() && ctx!=null && ctx.getResources().getConfiguration().orientation==1 &&
                     !Arrays.equals(opening,nativeWatchPresentation)) {
                     nativeWatchPresentation=opening;
