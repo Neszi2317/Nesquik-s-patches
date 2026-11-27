@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "packageName": "com.google.android.youtube",
+  "packageVersion": "21.47.483",
+  "isMount": false,
+  "appliedPatches": [
+    "Ask flyout menu",
+    "Hide video action buttons",
+    "ZZ Ask native action button"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    }
+  ]
+}

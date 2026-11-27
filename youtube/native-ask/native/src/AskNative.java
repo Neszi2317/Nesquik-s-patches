@@ -943,7 +943,12 @@ public final class AskNative {
                     java.lang.reflect.Field f = official.getDeclaredField(n); f.setAccessible(true); f.set(null, null);
                 }
                 java.lang.reflect.Field f = official.getDeclaredField("pendingSuggestionSelectionId");
-                f.setAccessible(true); f.setLong(null, -1);
+                f.setAccessible(true);
+                if (f.getType() == long.class) {
+                    f.setLong(null, -1);
+                } else {
+                    f.set(null, null);
+                }
             }
             Log.i("AskNative", "Opening current-video Ask without automatic summary");
         } catch (Exception ex) { Log.e("AskNative", "Could not disable automatic summary", ex); }

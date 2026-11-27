@@ -45,7 +45,7 @@ val askNativeAction = bytecodePatch(
     default=false
 ) {
     compatibleWith(Compatibility(name="YouTube",packageName="com.google.android.youtube",apkFileType=ApkFileType.APK,
-        appIconColor=0xFF0033,targets=listOf(AppTarget(version="21.20.405"),AppTarget(version="21.30.216",isExperimental=true),AppTarget(version="21.42.241",isExperimental=true),AppTarget(version="21.44.528",isExperimental=true))))
+        appIconColor=0xFF0033,targets=listOf(AppTarget(version="21.20.405"),AppTarget(version="21.30.216",isExperimental=true),AppTarget(version="21.42.241",isExperimental=true),AppTarget(version="21.44.528",isExperimental=true),AppTarget(version="21.47.483",isExperimental=true))))
     extendWith("extensions/ask-native.dex")
     // Finalize runs after all official patches execute. No cross-bundle dependencies.
     finalize {

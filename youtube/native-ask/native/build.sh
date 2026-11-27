@@ -20,13 +20,13 @@ cat > "$BUILD/MANIFEST.MF" <<MANIFEST
 Manifest-Version: 1.0
 Name: Ask Native Action Bar
 Description: Native Elements action button with official Ask panel opening
-Version: 0.8.2
+Version: 0.8.3
 Patcher-Version: 2.0.0
 Author: Neszi2317
 License: GPLv3
 Source: https://github.com/Neszi2317/Rounded-Subtiles
 
 MANIFEST
-"$JDK/bin/jar" cfm "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.2.mpp" "$BUILD/MANIFEST.MF" -C "$BUILD/bundle" .
+"$JDK/bin/jar" cfm "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.3.mpp" "$BUILD/MANIFEST.MF" -C "$BUILD/bundle" .
 # Manager's JVM host is Java17 even on recent Android. Do not regress to Java21.
-python3 "$NATIVE_DIR/tests/verify_java17.py" "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.2.mpp"
+python3 "$NATIVE_DIR/tests/verify_java17.py" "$NATIVE_DIR/dist/Ask_Native_ActionBar_0.8.3.mpp"

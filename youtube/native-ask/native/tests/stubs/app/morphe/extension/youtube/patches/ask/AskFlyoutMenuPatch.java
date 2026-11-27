@@ -8,15 +8,15 @@ public class AskFlyoutMenuPatch {
  public interface CommandExecutorAccess {void patch_executeCommand(byte[] b);}
  private static final Object pendingLock=new Object();
  private static String pendingWelcomeToken,pendingSummarizeToken;
- private static long pendingSuggestionSelectionId=-1;
+ private static Long pendingSuggestionSelectionId;
  public static String opened;
  public static CommandExecutorAccess executor;
  public static void setCommandExecutor(CommandExecutorAccess e){executor=e;}
  private static void openAskPanel(String id){showAskPanel(id);}
  public static void showAskPanel(String id){
   AskNative.beginShow(id);
-  opened=id;pendingWelcomeToken="welcome";pendingSummarizeToken="summary";pendingSuggestionSelectionId=42;
+  opened=id;pendingWelcomeToken="welcome";pendingSummarizeToken="summary";pendingSuggestionSelectionId=42L;
   AskNative.beforeShow();executor.patch_executeCommand(new byte[]{1});
  }
- public static boolean autoSummary(){return pendingWelcomeToken!=null||pendingSummarizeToken!=null||pendingSuggestionSelectionId>=0;}
+ public static boolean autoSummary(){return pendingWelcomeToken!=null||pendingSummarizeToken!=null||pendingSuggestionSelectionId!=null;}
 }
