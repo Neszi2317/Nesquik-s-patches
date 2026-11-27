@@ -22,7 +22,7 @@ def build(name,version,output,extension):
  run(KOTLIN,'-jvm-target','11' if name=='content-filter' else '17',*extra,'-classpath',TOOLS/'desktop.jar',*ks,'-d',b/'patch.jar')
  run(JAVA,'-cp',TOOLS/'r8.jar','com.android.tools.r8.D8','--min-api','26','--lib',TOOLS/'android.jar','--lib',TOOLS/'jdk21','--classpath',TOOLS/'desktop.jar','--output',b/'patch-dex',b/'patch.jar')
  out=ROOT/'patches'/output;out.parent.mkdir(exist_ok=True)
- manifest='\r\n'.join(['Manifest-Version: 1.0','Name: '+name,'Version: '+version,'Patcher-Version: 2.0.0','Description: Reddit 2026.47.0 compatibility port','',''])
+ manifest='\r\n'.join(['Manifest-Version: 1.0','Name: '+name,'Version: '+version,'Patcher-Version: 2.0.0','Description: Reddit 2026.48.0 compatibility port','',''])
  with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
   z.writestr('META-INF/MANIFEST.MF',manifest)
   with zipfile.ZipFile(b/'patch.jar') as jar:
@@ -33,6 +33,6 @@ def build(name,version,output,extension):
    if (src/license).exists():z.write(src/license,license)
  print('BUILT',out)
 if __name__=='__main__':
- build('content-filter','2.3.0','RedditContentFilter-v2.3.mpp','extensions/reddit-keywords.dex')
- build('hide-nsfw','1.1.0-experimental','reddit-hide-nsfw-1.1.0.mpp','nsfw-extension.dex')
- build('custom-home','0.2.0-experimental','reddit-custom-home-0.2.0.mpp','custom-home-extension.dex')
+ build('content-filter','2.4.0','RedditContentFilter-v2.4.mpp','extensions/reddit-keywords.dex')
+ build('hide-nsfw','1.2.0-experimental','reddit-hide-nsfw-1.2.0.mpp','nsfw-extension.dex')
+ build('custom-home','0.3.0-experimental','reddit-custom-home-0.3.0.mpp','custom-home-extension.dex')

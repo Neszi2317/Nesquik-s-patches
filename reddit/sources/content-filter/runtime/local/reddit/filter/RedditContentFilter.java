@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 import org.json.*;
 
 /** Derived from Santodan RedditContentFilter: preferences, listing filtering,
- * Link accessors/registration and settings. 2026.47.0 port; targeted post flair paths, no network code. */
+ * Link accessors/registration and settings. targeted post flair paths, no network code. */
 @SuppressWarnings({"unused","deprecation"})
 public final class RedditContentFilter {
     private static final String KEYWORDS="redditplusplus_filter_keywords";
@@ -52,7 +52,7 @@ public final class RedditContentFilter {
         }catch(Exception ignored){count("error.graphql");}
     }
     public static String diagnostics(){
-        KeywordRules k=rules();StringBuilder out=new StringBuilder("Reddit Local Keyword Filters 2.3.0\n");
+        KeywordRules k=rules();StringBuilder out=new StringBuilder("Reddit Local Keyword Filters 2.4.0\n");
         out.append("Runtime initialisé : ").append(k!=null).append("\nMots-clés : ").append(k==null?0:k.count).append("\nSubreddits : ").append(communities.count).append('\n');
         for(String key:new TreeSet<String>(DIAGNOSTICS.keySet()))out.append(key).append(" = ").append(DIAGNOSTICS.get(key).get()).append('\n');
         return out.toString();
@@ -134,7 +134,24 @@ public final class RedditContentFilter {
         for(Object item:original)if(!hideFeedPost(item))kept.add(item);
         return kept.size()==original.size()?original:kept;
     }
-    /** Exact 2026.47 model paths, verified at patch time. No arbitrary graph scan. */
+    private static final Map<String,String> MODEL_ALIASES = loadModelAliases();
+    private static Map<String,String> loadModelAliases() {
+        Map<String,String> aliases = new HashMap<>();
+        String encoded = BundledConfig.modelAliases(null, null);
+        if (!encoded.isEmpty()) {
+            for (String entry : encoded.split("\n")) {
+                int separator = entry.indexOf('=');
+                aliases.put(entry.substring(0, separator), entry.substring(separator + 1));
+            }
+        }
+        return aliases;
+    }
+    private static String modelType(Object model) {
+        String name = model.getClass().getName();
+        if (MODEL_ALIASES.isEmpty() || name.indexOf('.') >= 0) return name;
+        return MODEL_ALIASES.getOrDefault(name, "");
+    }
+    /** Exact model paths, verified at patch time. */
     public static boolean hideFeedPost(Object model) {
         if(model==null)return false;
         String type=model.getClass().getName();count("seen."+type);
@@ -145,12 +162,12 @@ public final class RedditContentFilter {
     private static boolean hideFeedPostInternal(Object model) {
         KeywordRules k=rules();if(model==null||k==null||(k.count==0&&communities.count==0))return false;
         try {
-            String type=model.getClass().getName();
+            String type=modelType(model);
             if(type.equals("vof0"))return hideFeedPost(field(model,"e"));
             if(isBlockedCommunityItem(model))return true;
             if(type.equals("vmf0")){
                 Object post=field(model,"e");
-                if(post==null||!post.getClass().getName().equals("hag0"))return false;
+                if(post==null||!modelType(post).equals("hag0"))return false;
                 return communities.matches(string(field(post,"s")))||k.matches(string(field(post,"e")))||k.matches(string(field(post,"O")))||k.matches(string(field(post,"P")));
             }
             switch(type){case "qs40":case "y39":case "kk50":case "vmt":case "myl0":case "p9m0":case "m9m0":case "b8m0":break;default:return false;}
@@ -171,23 +188,23 @@ public final class RedditContentFilter {
     private static boolean isBlockedCommunityItem(Object item) {
         if(item==null||communities.count==0)return false;
         try {
-            String type=item.getClass().getName();Object behavior;
+            String type=modelType(item);Object behavior;
             switch(type) {
                 case "a1h0":behavior=field(field(item,"b"),"a");break;
                 case "b1h0":behavior=field(field(item,"k"),"a");break;
                 case "mzg0":behavior=field(field(item,"b"),"a");break;
                 case "skf0":
                     Object community=field(item,"f");
-                    return community!=null&&community.getClass().getName().equals("hbf0")&&communities.matches(string(field(community,"k")));
+                    return community!=null&&modelType(community).equals("hbf0")&&communities.matches(string(field(community,"k")));
                 default:return false;
             }
             if(behavior==null)return false;
-            String kind=behavior.getClass().getName();
+            String kind=modelType(behavior);
             return (kind.equals("w0h0")||kind.equals("w86"))&&communities.matches(string(field(behavior,"b")));
         }catch(Exception ignored){return false;}
     }
     private static boolean matchesPostText(Object model,KeywordRules k,int depth)throws Exception {
-        if(model==null||depth>5)return false;String type=model.getClass().getName();
+        if(model==null||depth>5)return false;String type=modelType(model);
         if(type.equals("com.reddit.domain.model.Link"))return matchesLink(model,k);
         if(type.equals("ghw"))return communities.matchesHeader(string(field(model,"n")))||communities.matchesHeader(string(field(model,"m")));
         if(type.equals("y39"))return communities.matches(string(field(model,"k")))||k.matches(string(field(model,"q")))||matchesPostText(field(model,"t"),k,depth+1);
@@ -195,7 +212,7 @@ public final class RedditContentFilter {
         if(type.equals("pw40")){
             Object flairs=field(model,"i");
             if(flairs instanceof Iterable<?>)for(Object flair:(Iterable<?>)flairs){
-                if(flair!=null&&flair.getClass().getName().equals("mu40")&&
+                if(flair!=null&&modelType(flair).equals("mu40")&&
                     (k.matches(string(field(flair,"a")))||communities.matches(string(field(flair,"d")))))return true;
             }
             return false;

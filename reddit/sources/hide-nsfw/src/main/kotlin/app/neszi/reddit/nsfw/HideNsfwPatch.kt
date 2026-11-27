@@ -25,14 +25,20 @@ private fun method(owner: String, name: String, params: List<String>, ret: Strin
 @Suppress("unused")
 val hideNsfwPostsPatch = bytecodePatch(
     name = "Hide NSFW posts",
-    description = "Removes posts marked 18+ from native feed lists. Independent, always active when included. Reddit 2026.47.0.",
+    description = "Removes posts marked 18+ from native feed lists. Independent, always active when included.",
     default = false
 ) {
     compatibleWith(Compatibility(packageName="com.reddit.frontpage", name="Reddit",
-        targets=listOf(AppTarget(version="2026.47.0", isExperimental=true))))
+        targets=listOf(AppTarget(version="2026.47.0", isExperimental=true), AppTarget(version="2026.48.0", isExperimental=true))))
     extendWith(Supplier { Resources::class.java.getResourceAsStream("/nsfw-extension.dex")
         ?: throw PatchException("Missing runtime DEX") })
     finalize {
+        val reddit48 = packageMetadata.versionName == "2026.48.0"
+        val nativeFeedElement = if (reddit48) "Lcej;" else "Lmtj;"
+        val persistentList = if (reddit48) "Lp7q;" else "Lkpq;"
+        val nativeFeedSection = if (reddit48) "Lnac;" else "Lulc;"
+        val builderClass = if (reddit48) "Lhee;" else "Lvcf;"
+        val builderName = if (reddit48) "e0" else "N0"
         val all = mutableListOf<ClassDef>()
         classDefForEach { all.add(it) }
         val byType = all.associateBy { it.type }
@@ -49,7 +55,7 @@ val hideNsfwPostsPatch = bytecodePatch(
             var cur: ClassDef? = c
             val seen = mutableSetOf<String>()
             while (cur != null && seen.add(cur.type)) {
-                if (cur.type == "Lmtj;") return true
+                if (cur.type == nativeFeedElement) return true
                 cur = byType[cur.superclass]
             }
             return false
@@ -58,7 +64,7 @@ val hideNsfwPostsPatch = bytecodePatch(
         val sectionNodes = all.filter { c -> strings(c).any { it.contains("Section(") } }.map { it.type }.toSet()
         val enumHolders = all.filter { c -> c.fields.any { it.type in enums } }.map { it.type }.toSet()
         val candidates = feedNodes + sectionNodes + enumHolders + LINK
-        val containers = setOf("Ljava/util/List;", "Ljava/util/Collection;", "Ljava/lang/Iterable;", "Lkpq;", "Lulc;")
+        val containers = setOf("Ljava/util/List;", "Ljava/util/Collection;", "Ljava/lang/Iterable;", persistentList, nativeFeedSection)
         var bridges = 0
         for (type in candidates.sorted()) {
             val original = byType[type] ?: continue
@@ -101,10 +107,10 @@ val hideNsfwPostsPatch = bytecodePatch(
             move-result-object p1
         """)
         // Final native sections, including restored/updated view states. Preserve persistent-list type.
-        val builder = classDefBy("Lvcf;").methods.singleOrNull { it.name == "N0" && it.parameterTypes == listOf("Ljava/lang/Iterable;") && it.returnType == "Lkpq;" }
+        val builder = classDefBy(builderClass).methods.singleOrNull { it.name == builderName && it.parameterTypes == listOf("Ljava/lang/Iterable;") && it.returnType == persistentList }
             ?: throw PatchException("Persistent list builder missing")
         val runtime = mutableClassDefBy(FILTER)
-        runtime.methods.add(method(FILTER, "filterPersistent", listOf("Lkpq;"), "Lkpq;", 2, """
+        runtime.methods.add(method(FILTER, "filterPersistent", listOf(persistentList), persistentList, 2, """
             invoke-static/range { p0 .. p0 }, $FILTER->filter(Ljava/util/List;)Ljava/util/List;
             move-result-object v0
             if-ne v0, p0, :changed
@@ -116,9 +122,9 @@ val hideNsfwPostsPatch = bytecodePatch(
         """, static=true))
         val feed = classDefByStrings("Feed(sections=").singleOrNull()
             ?: throw PatchException("Feed view state missing")
-        val feedCtor = mutableClassDefBy(feed.type).methods.single { it.name == "<init>" && it.parameterTypes.size == 12 && it.parameterTypes.first() == "Lkpq;" }
+        val feedCtor = mutableClassDefBy(feed.type).methods.single { it.name == "<init>" && it.parameterTypes.size == 12 && it.parameterTypes.first() == persistentList }
         feedCtor.addInstructions(0, """
-            invoke-static/range { p1 .. p1 }, $FILTER->filterPersistent(Lkpq;)Lkpq;
+            invoke-static/range { p1 .. p1 }, $FILTER->filterPersistent($persistentList)$persistentList
             move-result-object p1
         """)
         println("Hide NSFW posts: $bridges typed native bridges; Listing.children + ${page.type}.data + ${feed.type}.sections filtered; pagination keys untouched")

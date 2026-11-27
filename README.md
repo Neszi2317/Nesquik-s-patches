@@ -7,7 +7,7 @@ Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **F
 | Application | Patchs | Versions déclarées |
 | --- | --- | --- |
 | X | Filtre avancé de mots-clés, masquage des posts sensibles, avatars et bannières, Anonymous Names, flou des médias, masquage permanent par identifiant | 12.43.0-prod.01 |
-| Reddit | Filtre local de mots-clés, masquage NSFW, accueil personnalisé | 2026.47.0 |
+| Reddit | Filtre local de mots-clés, masquage NSFW, accueil personnalisé | 2026.47.0, 2026.48.0 |
 | YouTube | Ask Native Action Bar 0.8.2 | 21.20.405, 21.30.216, 21.42.241, 21.44.528 |
 | YouTube | Bouton Gemini dans la description, expérimental | 21.30.216 |
 | YouTube | Recherche dans les playlists, expérimentale | 21.16.256 |
@@ -31,7 +31,7 @@ Dans **Sources → + → Remote**, ajouter [l’URL du catalogue](https://raw.gi
 - **YouTube 21.47.483**. Avec Morphe 2.4.0-dev.12, sélectionne **Playlist search**. Dans Nesquik’s patches 0.4.7, sélectionne **YouTube: Playlist Search & Date Filter (21.47.483)** et **Rounded YouTube Captions (21.47.483)**.
 
 - **X**. Ajoute la source officielle **Piko 3.12.0-dev.6** et le bundle **Nesquik's patches**. Dans le même patching, sélectionne le patch officiel **NewX: Filter posts by keyword**, puis les patchs Nesquik souhaités. Leurs réglages apparaissent sous **Piko → Contenu** sur l'APK généré. Tu peux laisser la liste officielle vide et remplir le filtre avancé. Pour reproduire la configuration testée, laisse **NewX: Show sensitive media** décoché.
-- **Reddit**. Garde la source officielle Morphe et sélectionne au moins un patch qui installe ses réglages, par exemple **Hide navigation buttons**, avec les patchs personnalisés. La compilation de référence utilise Morphe Patches **2.4.0-dev.6**.
+- **Reddit**. Garde la source officielle Morphe et sélectionne au moins un patch qui installe ses réglages, par exemple **Hide navigation buttons**, avec les patchs personnalisés. Sur **2026.48.0**, actualise la source Nesquik’s patches en **0.4.8** et utilise **Morphe Patches 2.4.0**.
 - **YouTube**. Sur **21.30.216**, les deux patchs Ask/Gemini ont été appliqués avec **Ask flyout menu** et **Hide video action buttons** de Morphe Patches **2.1.0-dev.8**. Sur **21.46.522**, la traduction et la variante correspondante des sous-titres arrondis ont été appliquées ensemble.
 - **Firefox**. Configure la liste des sites à bloquer dans les options de **Firefox - Local Website Blocker** avant de lancer le patching. Sur Firefox 160.0.1, utilise la préversion Heval 3.1.0-dev.1 pour combiner les deux sources.
 - **Discord**. Ajoute la source officielle [Venus Patches](https://github.com/VenusIsJaded/Venus-Patches) et sélectionne **Venus settings** avec **! Hide blocked or ignored users**. La combinaison a été testée avec Venus **1.21.1**.

@@ -4,5 +4,6 @@ public final class BundledConfig {
  private BundledConfig(){}
  public static String keywords(StringBuilder unused,String chunk){return "";}
  public static String subreddits(StringBuilder unused,String chunk){return "";}
+ public static String modelAliases(StringBuilder unused,String chunk){return "";}
  public static boolean shouldApply(String previous,String next){return previous==null?!next.isEmpty():!previous.equals(next);}
 }

@@ -36,6 +36,8 @@ class hbf0 {String k;hbf0(String name){k=name;}}
 class skf0 {Object f;skf0(String name){f=new hbf0(name);}}
 class hag0 {String s,e,O,P;hag0(String name,String title,String body,String preview){s=name;e=title;O=body;P=preview;}}
 class vmf0 {Object e;vmf0(String name,String title,String body,String preview){e=new hag0(name,title,body,preview);}}
+class pu30 {String e = "t3_new";List f;pu30(Object child){f=Collections.singletonList(child);}}
+class a550 {String i;a550(String text){i=text;}}
 public class RuntimeTest {
  static int tests;
  static void ok(boolean v,String label){if(!v)throw new AssertionError(label);tests++;System.out.println("PASS "+label);}
@@ -162,7 +164,7 @@ public class RuntimeTest {
   ok(!RedditContentFilter.hideFeedPost(new qs40("rawblocked",new g560("Normal"))),"removing community rule reevaluates raw cache");
   ok(!RedditContentFilter.hideFeedPost(new qs40("t3_late",new g560("Normal"))),"removing community rule reevaluates Link cache");
   String diagnostic=RedditContentFilter.diagnostics();
-  ok(diagnostic.contains("2.3.0")&&diagnostic.contains("hidden.qs40")&&!diagnostic.contains("rawblocked")&&!diagnostic.contains("laCaca"),"diagnostics contain version and counters, no post IDs or subreddit names");
+  ok(diagnostic.contains("2.4.0")&&diagnostic.contains("hidden.qs40")&&!diagnostic.contains("rawblocked")&&!diagnostic.contains("laCaca"),"diagnostics contain version and counters, no post IDs or subreddit names");
   configure("cardiology");
   KeywordRules literals=new KeywordRules("\uFEFFTrump\r\n trump \n\nTRUMP\na.b\nc++\n(x)\n[y]\nartificial intelligence");
   ok(literals.count==6,"BOM, CRLF, trimming, blanks and case-insensitive deduplication");
@@ -174,6 +176,14 @@ public class RuntimeTest {
   for(int i=0;i<100000;i++)if(bulk.matches("ordinary unrelated text in a comment"))throw new AssertionError("false positive");
   ok(bulk.matches("KEYWORD_9999_END"),"10,000-rule bulk matcher");
   System.out.println("PERF 10000 rules compile_ms="+(built-start)/1000000+" 100000 scans_ms="+(System.nanoTime()-built)/1000000);
+  Field aliases=RedditContentFilter.class.getDeclaredField("MODEL_ALIASES");
+  aliases.setAccessible(true);
+  @SuppressWarnings("unchecked") Map<String,String> models=(Map<String,String>)aliases.get(null);
+  models.put("pu30","qs40");models.put("a550","g560");
+  configure("cardiology");
+  ok(RedditContentFilter.hideFeedPost(new pu30(new a550("Cardiology"))),"2026.48 aliases resolve post and title models");
+  ok(!RedditContentFilter.hideFeedPost(new qs40("t3_old",new g560("Cardiology"))),"2026.48 ignores historic class names that may now identify unrelated types");
+  models.clear();
   System.out.println("TOTAL "+tests+" checks passed; Android UI/scroll not executed.");
  }
 }

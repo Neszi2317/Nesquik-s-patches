@@ -20,16 +20,19 @@ private object ExtensionResource
 @Suppress("unused")
 val customHomePatch = bytecodePatch(
     name = "Custom Home & Disable Main Feed",
-    description = "Runtime Home subreddit and removal of the Home navigation button. Reddit 2026.47.0; Android testing required.",
+    description = "Runtime Home subreddit and removal of the Home navigation button.",
     default = false
 ) {
-    compatibleWith(Compatibility(packageName = "com.reddit.frontpage", name = "Reddit", targets = listOf(AppTarget(version = "2026.47.0", isExperimental = true))))
+    compatibleWith(Compatibility(packageName = "com.reddit.frontpage", name = "Reddit", targets = listOf(AppTarget(version = "2026.47.0", isExperimental = true), AppTarget(version = "2026.48.0", isExperimental = true))))
     extendWith(Supplier { ExtensionResource::class.java.getResourceAsStream("/custom-home-extension.dex")
         ?: throw PatchException("Missing custom-home-extension.dex") })
 
     // All official patches execute first, regardless of alphabetical order or source bundle.
     // Do not overwrite classes from the main Morphe extension.
     finalize {
+        val reddit48 = packageMetadata.versionName == "2026.48.0"
+        val navEntryMetadata = if (reddit48) "Lrdz;" else "La500;"
+        val persistentList = if (reddit48) "Lp7q;" else "Lkpq;"
         val settings = mutableClassDefByOrNull("Lapp/morphe/extension/reddit/settings/preference/RedditPreferenceFragment;")
             ?: throw PatchException("Select an official Reddit patch that includes Morphe Settings (e.g. Hide navigation buttons) in this same patching run.")
         val settingsInit = settings.methods.singleOrNull { it.name == "initialize" && it.parameterTypes.isEmpty() }
@@ -89,7 +92,7 @@ val customHomePatch = bytecodePatch(
             c.fields.any { it.type == NAV } && c.methods.any { it.name == "<init>" && it.parameterTypes.firstOrNull() == NAV }
         } ?: throw PatchException("NavEntry signature changed")
         val entryCtor = mutableClassDefBy(entryClass.type).methods.single {
-            it.name == "<init>" && it.parameterTypes == listOf(NAV, "Z", "La500;", "Ljava/lang/String;")
+            it.name == "<init>" && it.parameterTypes == listOf(NAV, "Z", navEntryMetadata, "Ljava/lang/String;")
         }
         entryCtor.addInstructions(0, """
             invoke-static/range { p1 .. p1 }, $EXT->replaceEntry($NAV)$NAV
@@ -105,8 +108,8 @@ val customHomePatch = bytecodePatch(
             val r = (it as? ReferenceInstruction)?.reference as? MethodReference
             r?.definingClass == "Ljava/util/Iterator;" && r.name == "hasNext"
         } }
-        val listMethod = listMethods.singleOrNull { it.parameterTypes == listOf("Lkpq;", "Lcom/reddit/launch/usecase/BottomNavTabListUseCaseParams;") && it.returnType == "Lkpq;" }
-            ?: throw PatchException("2026.47.0 bottom navigation list signature changed")
+        val listMethod = listMethods.singleOrNull { it.parameterTypes == listOf(persistentList, "Lcom/reddit/launch/usecase/BottomNavTabListUseCaseParams;") && it.returnType == persistentList }
+            ?: throw PatchException("Reddit bottom navigation list signature changed")
         val insns = listMethod.implementation!!.instructions.toList()
         val enumLoad = insns.withIndex().first { (_, i) ->
             val r = (i as? ReferenceInstruction)?.reference as? FieldReference

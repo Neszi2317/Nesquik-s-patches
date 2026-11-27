@@ -1,11 +1,11 @@
 {
   "desktop.jar": {
-    "url": "https://github.com/MorpheApp/morphe-desktop/releases/download/v2.3.0/morphe-desktop-2.3.0-all.jar",
-    "sha256": "e0e49525e1fbe1108d6cfd7398d39e0cd489c58a753e63653c1e8f11a0099757"
+    "url": "https://github.com/MorpheApp/morphe-desktop/releases/download/v2.4.0/morphe-desktop-2.4.0-all.jar",
+    "sha256": "d5f75c05e6c84731dc18faa658810a3ed49ab32d60b756da8503432e78cf1477"
   },
   "official.mpp": {
-    "url": "https://github.com/MorpheApp/morphe-patches/releases/download/v2.4.0-dev.6/patches-2.4.0-dev.6.mpp",
-    "sha256": "ff2170301a6349da73ec3d2402663bf10db7f25281e2973630a5fc02ec429cde"
+    "url": "https://github.com/MorpheApp/morphe-patches/releases/download/v2.4.0/patches-2.4.0.mpp",
+    "sha256": "880d559a3a09846d729b6801638c84a7de446918198d590fa557b68c27a17cd2"
   },
   "kotlin.zip": {
     "url": "https://github.com/JetBrains/kotlin/releases/download/v2.3.10/kotlin-compiler-2.3.10.zip",
@@ -16,19 +16,19 @@
     "sha256": "d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c"
   },
   "android.jar": {
-    "url": "https://raw.githubusercontent.com/Reginer/aosp-android-jar/262f6ae931160011572a5adfe4ec6302585e8f60/android-35/android.jar",
-    "sha256": "60be6880d7b2b526d654460d4ce6fa81bf23efaa28b02d901d0b63a01ccf4671"
+    "url": "https://raw.githubusercontent.com/Sable/android-platforms/master/android-35/android.jar",
+    "sha256": "4566663c3876e022b4fa4ced8c8697c4ab1688267f090114fd92d027b32e619b"
   },
   "android-host.jar": {
     "url": "https://repo.maven.apache.org/maven2/com/google/android/android/4.1.1.4/android-4.1.1.4.jar",
     "sha256": "84072541cbb711eff89f7277100ff854929a446dba7ceb1b195c340e0b4fd3cb"
   },
   "r8.jar": {
-    "url": "https://storage.googleapis.com/r8-releases/raw/9.5.26/r8.jar",
-    "sha256": "6f45df7c9999615206200b80712311b14eee8d29a0850bf1158f62b1d4ba17a3"
+    "url": "https://dl.google.com/android/maven2/com/android/tools/r8/9.5.26/r8-9.5.26.jar",
+    "sha256": "3502f087388ce95bbf5254555927f09385dc2636873964d0bd53f3eaf4fb49ad"
   },
   "json.jar": {
-    "url": "https://repo.maven.apache.org/maven2/org/json/json/20240303/json-20240303.jar",
-    "sha256": "3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed"
+    "url": "https://repo.maven.apache.org/maven2/org/json/json/20250517/json-20250517.jar",
+    "sha256": "3ea61b2a06e31edf1c91134fe9106b0ebb16628be169f3db75bc7a2b06b45796"
   }
 }

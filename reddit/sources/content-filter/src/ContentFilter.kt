@@ -22,12 +22,56 @@ import com.android.tools.smali.dexlib2.iface.reference.*
 private const val R="Llocal/reddit/filter/RedditContentFilter;"
 private const val LINK="Lcom/reddit/domain/model/Link;"
 private const val LIST="Ljava/util/List;"
+// 2026.48.0 names for the models used by the 2026.47.0 hooks and runtime.
+private val reddit48Types = mapOf(
+    "Lqs40;" to "Lpu30;",
+    "Ly39;" to "Lww8;",
+    "Lpw40;" to "Lay30;",
+    "Lmu40;" to "Ldw30;",
+    "Lghw;" to "Lhsv;",
+    "Lg560;" to "La550;",
+    "Lvdd0;" to "Lvac0;",
+    "Lvof0;" to "Lale0;",
+    "Lopa;" to "Lcga;",
+    "Lkk50;" to "Lyk40;",
+    "Lvmt;" to "Li3t;",
+    "Lmyl0;" to "Liqk0;",
+    "Lp9m0;" to "Le1l0;",
+    "Lm9m0;" to "Lb1l0;",
+    "Lb8m0;" to "Lqzk0;",
+    "Lw270;" to "Ld360;",
+    "Lumt;" to "Lh3t;",
+    "Ltmt;" to "Lg3t;",
+    "Lkpq;" to "Lp7q;",
+    "Lvmf0;" to "Laje0;",
+    "Lhag0;" to "Ll6f0;",
+    "Lskf0;" to "Lxge0;",
+    "Lhbf0;" to "Ll7e0;",
+    "La1h0;" to "Loxf0;",
+    "Lb1h0;" to "Lpxf0;",
+    "Lv0h0;" to "Ljxf0;",
+    "Lu0h0;" to "Lixf0;",
+    "Lw0h0;" to "Lkxf0;",
+    "Lmzg0;" to "Lawf0;",
+    "Lozg0;" to "Lcwf0;",
+    "Lw86;" to "Lp46;",
+    "Lztg0;" to "Loqf0;",
+    "Llzg0;" to "Lzvf0;",
+    "Lqkr;" to "Lm6t;",
+    "Lpj50;" to "Lek40;",
+    "Loj50;" to "Ldk40;",
+    "Lnj50;" to "Lck40;",
+    "Lqs50;" to "Lft40;",
+    "Lps50;" to "Let40;",
+    "Lmtj;" to "Lcej;",
+    "Lulc;" to "Lnac;",
+)
 private fun Method.code()=implementation?.instructions?.toList().orEmpty()
 private fun Instruction.ref()=(this as? ReferenceInstruction)?.reference
 private fun Method.calls()=code().mapNotNull{it.ref() as? MethodReference}
 private fun Method.params()=parameterTypes.map{it.toString()}
 private fun <T> List<T>.one(label:String):T=singleOrNull()?:throw PatchException("Content filter: expected one $label, got $size")
-private fun check(ok:Boolean,why:String){if(!ok)throw PatchException("Content filter 2026.47.0: $why")}
+private fun check(ok:Boolean,why:String){if(!ok)throw PatchException("Content filter: $why")}
 private fun MutableMethod.filterReturns(call:String){
     val all=code()
     for(i in all.indices.reversed())if(all[i].opcode==Opcode.RETURN_OBJECT){
@@ -70,7 +114,7 @@ private fun MutableMethod.embedText(text:String){
 
 val contentFiltersPatch=bytecodePatch(
     name="Reddit - Local keyword filters",
-    description="Local literal keyword lists and TXT import. Configure keyword/subreddit lists and TXT imports before patching. Filters posts (including flair), comments, search communities and typeahead suggestions. Reddit 2026.47.0.",
+    description="Local literal keyword lists and TXT import. Configure keyword/subreddit lists and TXT imports before patching. Filters posts (including flair), comments, search communities and typeahead suggestions.",
     default=false
 ){
     val blockedKeywords by stringsOption(key="blockedKeywords",default=emptyList(),title="Blocked keywords",
@@ -79,21 +123,29 @@ val contentFiltersPatch=bytecodePatch(
         description="Noms exacts : AskReddit, r/AskReddit ou /r/AskReddit. Ajoutez avec +, séparés par virgules, ou utilisez le TXT ci-dessous. Casse ignorée.")
     val keywordsFile=filePathOption(key="keywordsFile",title="Blocked keywords — TXT",description="Fichier UTF-8 local, une expression par ligne. Fusionné avec Blocked keywords.",allowedExtensions=listOf("txt"))
     val subredditsFile=filePathOption(key="subredditsFile",title="Blocked subreddits — TXT",description="Fichier UTF-8 local, un subreddit par ligne. Fusionné avec Blocked subreddits.",allowedExtensions=listOf("txt"))
-    compatibleWith(Compatibility(packageName="com.reddit.frontpage", name="Reddit", targets=listOf(AppTarget(version="2026.47.0", isExperimental=true))))
+    compatibleWith(Compatibility(packageName="com.reddit.frontpage", name="Reddit", targets=listOf(AppTarget(version="2026.47.0", isExperimental=true), AppTarget(version="2026.48.0", isExperimental=true))))
     extendWith("extensions/reddit-keywords.dex")
     execute {
-        check(packageMetadata.packageName=="com.reddit.frontpage"&&packageMetadata.versionName=="2026.47.0","wrong target version")
+        val version = packageMetadata.versionName
+        check(packageMetadata.packageName == "com.reddit.frontpage" && version in setOf("2026.47.0", "2026.48.0"), "unsupported target: $version")
+        val types = if (version == "2026.48.0") reddit48Types else emptyMap()
+        fun nativeType(original: String) = types[original] ?: original
         val keywords=readRules(blockedKeywords,keywordsFile.value,false)
         val subreddits=readRules(blockedSubreddits,subredditsFile.value,true)
         val config=mutableClassDefBy("Llocal/reddit/filter/BundledConfig;")
         config.methods.filter{it.name=="keywords"}.one("keyword defaults").embedText(keywords)
         config.methods.filter{it.name=="subreddits"}.one("subreddit defaults").embedText(subreddits)
+        val aliases = types.entries.joinToString("\n") { (original, current) ->
+            "${current.substring(1, current.length - 1)}=${original.substring(1, original.length - 1)}"
+        }
+        config.methods.filter { it.name == "modelAliases" }.one("model aliases").embedText(aliases)
         println("Content filters: embedded Manager configuration (local only)")
         // Cross-check exact runtime paths against semantic toString signatures and field types.
-        fun validate(type:String,marker:String,fields:Map<String,String>){
+        fun validate(original:String,marker:String,fields:Map<String,String>){
+            val type = nativeType(original)
             val c=classDefBy(type)
             check(c.methods.any{m->m.code().any{(it.ref() as? StringReference)?.string==marker}},"$type semantic marker missing")
-            for((name,kind)in fields)check(c.fields.any{it.name==name&&it.type==kind},"$type.$name changed")
+            for((name,kind)in fields)check(c.fields.any{it.name==name&&it.type==nativeType(kind)},"$type.$name changed")
         }
         validate("Lqs40;","PostElement(linkId=",mapOf("e" to "Ljava/lang/String;","f" to "Lkpq;"))
         validate("Ly39;","ClassicPostElement(linkId=",mapOf("q" to "Ljava/lang/String;","k" to "Ljava/lang/String;","t" to "Lpw40;"))
@@ -129,12 +181,22 @@ val contentFiltersPatch=bytecodePatch(
         validate("Llzg0;","SearchTypeaheadRow(id=",mapOf("c" to "Ljava/util/ArrayList;"))
         // Filter the two typed child collections where native typeahead becomes feed data.
         // No mutation of server/cache models and no interception of generic List/Compose APIs.
-        val typeahead=mutableClassDefBy("Lcom/reddit/search/combined/data/a;").methods.filter{
-            it.calls().any{r->r.definingClass=="Lpzg0;"&&r.name=="<init>"}
+        val typeaheadListFields = setOf(
+            nativeType("Lztg0;") + "->b:$LIST",
+            nativeType("Llzg0;") + "->c:Ljava/util/ArrayList;",
+        )
+        val typeahead=mutableClassDefBy("Lcom/reddit/search/combined/data/a;").methods.filter { method ->
+            if (version == "2026.47.0")
+                method.calls().any { it.definingClass == "Lpzg0;" && it.name == "<init>" }
+            else
+                method.code().mapNotNull { (it.ref() as? FieldReference)?.toString() }
+                    .containsAll(typeaheadListFields)
         }.one("dynamic typeahead mapper")
         val reads=typeahead.code().mapIndexedNotNull { index, ins ->
-            val f=ins.ref() as? FieldReference
-            if(ins.opcode==Opcode.IGET_OBJECT && (f?.toString()=="Lztg0;->b:$LIST" || f?.toString()=="Llzg0;->c:Ljava/util/ArrayList;"))Triple(index,(ins as OneRegisterInstruction).registerA,f!!.type) else null
+            val field = ins.ref() as? FieldReference
+            if (ins.opcode == Opcode.IGET_OBJECT && field != null && field.toString() in typeaheadListFields)
+                Triple(index, (ins as OneRegisterInstruction).registerA, field.type)
+            else null
         }
         check(reads.size==2,"typeahead child list paths changed")
         for((index,reg,kind) in reads.reversed())typeahead.addInstructions(index+1,
@@ -142,7 +204,7 @@ val contentFiltersPatch=bytecodePatch(
             if(kind!=LIST)"\ncheck-cast v$reg, $kind" else "")
         val comments=classDefBy("Lcom/reddit/domain/model/Comment;")
         check(comments.methods.any{it.name=="getBody"&&it.returnType=="Ljava/lang/String;"},"Comment.getBody missing")
-        check(classDefBy("Lopa;").methods.count{it.name=="<init>"&&it.params().size==10}==1,"comment projection constructor changed")
+        check(classDefBy(nativeType("Lopa;")).methods.count{it.name=="<init>"&&it.params().size==10}==1,"comment projection constructor changed")
         // Same Listing.getChildren path as Santodan; no constructor mutation or cache deletion.
         mutableClassDefBy("Lcom/reddit/domain/model/listing/Listing;").methods.filter{it.name=="getChildren"&&it.params().isEmpty()&&it.returnType==LIST}.one("Listing getter").filterReturns("filterListing")
         // Preserve Link text registration from Santodan, but bounded and entirely offline.
@@ -152,24 +214,24 @@ val contentFiltersPatch=bytecodePatch(
         // Refresh Link text when actually mapped, after deserialization has populated mutable fields.
         // Both static mappers keep all original instructions and coroutine behavior.
         val linkMapper=mutableClassDefBy("Lcom/reddit/feeds/impl/data/mapper/link/a;").methods.filter{
-            it.name=="a"&&it.params().firstOrNull()==LINK&&it.calls().any{r->r.definingClass=="Lqs40;"&&r.name=="<init>"}
+            it.name=="a"&&it.params().firstOrNull()==LINK&&it.calls().any{r->r.definingClass==nativeType("Lqs40;")&&r.name=="<init>"}
         }.one("card Link mapper")
         check(AccessFlags.STATIC.isSet(linkMapper.accessFlags),"card mapper no longer static")
         linkMapper.addInstructions(0,"invoke-static/range { p0 .. p0 }, $R->rememberLink(Ljava/lang/Object;)V")
-        val classicMapper=mutableClassDefBy("Lqkr;").methods.filter{
-            it.params().firstOrNull()==LINK&&it.calls().any{r->r.definingClass=="Ly39;"&&r.name=="<init>"}
+        val classicMapper=mutableClassDefBy(nativeType("Lqkr;")).methods.filter{
+            it.params().firstOrNull()==LINK&&it.calls().any{r->r.definingClass==nativeType("Ly39;")&&r.name=="<init>"}
         }.one("classic Link mapper")
         check(AccessFlags.STATIC.isSet(classicMapper.accessFlags),"classic mapper no longer static")
         classicMapper.addInstructions(0,"invoke-static/range { p0 .. p0 }, $R->rememberLink(Ljava/lang/Object;)V")
         validate("Lpj50;","PostPreviewComponentFragment(id=",mapOf("a" to "Ljava/lang/String;","d" to "Lnj50;"))
         validate("Lnj50;","Post(__typename=",mapOf("i" to "Lqs50;"))
-        check(classDefBy("Lqs50;").fields.any{it.name=="a"&&it.type=="Lps50;"},"GraphQL subreddit wrapper changed")
+        check(classDefBy(nativeType("Lqs50;")).fields.any{it.name=="a"&&it.type==nativeType("Lps50;")},"GraphQL subreddit wrapper changed")
         validate("Lps50;","Subreddit(type=",mapOf("c" to "Ljava/lang/String;"))
-        val rawPost=mutableClassDefBy("Lpj50;").methods.filter{it.name=="<init>"&&it.params()==listOf("Ljava/lang/String;","Loj50;",LIST,"Lnj50;")}.one("GraphQL post constructor")
+        val rawPost=mutableClassDefBy(nativeType("Lpj50;")).methods.filter{it.name=="<init>"&&it.params()==listOf("Ljava/lang/String;",nativeType("Loj50;"),LIST,nativeType("Lnj50;"))}.one("GraphQL post constructor")
         for(i in rawPost.code().indices.reversed())if(rawPost.code()[i].opcode==Opcode.RETURN_VOID)
             rawPost.addInstructions(i,"invoke-static/range { p0 .. p0 }, $R->rememberGraphqlPost(Ljava/lang/Object;)V")
         // Narrow native feed converter. Null output is already explicitly skipped by callers.
-        val converter=Fingerprint(strings=listOf("FeedConverter.convert("),parameters=listOf("Lmtj;"),returnType="Lulc;").method
+        val converter=Fingerprint(strings=listOf("FeedConverter.convert("),parameters=listOf(nativeType("Lmtj;")),returnType=nativeType("Lulc;")).method
         check(converter.implementation!!.registerCount>=3,"converter locals missing")
         converter.addInstructionsWithLabels(0,"""
             invoke-static/range { p1 .. p1 }, $R->hideFeedPost(Ljava/lang/Object;)Z
@@ -183,16 +245,16 @@ val contentFiltersPatch=bytecodePatch(
         val processor=Fingerprint(parameters=listOf("Lcom/reddit/feeds/data/FeedType;",LIST,LIST),returnType="Lkotlin/Pair;").matchAll().one("feed processor").method
         processor.addInstructions(0,"invoke-static/range { p2 .. p2 }, $R->filterFeedElements($LIST)$LIST\nmove-result-object p2")
         // Both native tree-to-view projections. Clone only the emitted view state.
-        for(type in listOf("Lcom/reddit/comments/tree/a;","Lcom/reddit/comments/tree/b;")){
-            val m=mutableClassDefBy(type).methods.filter{it.name=="emit"&&it.params().size==2}.one("$type emit")
-            val c=m.code();val i=c.indices.filter{c[it].opcode==Opcode.CHECK_CAST&&c[it].ref().toString()=="Lopa;"}.one("comment state cast")
+        for(emitter in listOf("Lcom/reddit/comments/tree/a;","Lcom/reddit/comments/tree/b;")){
+            val m=mutableClassDefBy(emitter).methods.filter{it.name=="emit"&&it.params().size==2}.one("$emitter emit")
+            val c=m.code();val i=c.indices.filter{c[it].opcode==Opcode.CHECK_CAST&&c[it].ref().toString()==nativeType("Lopa;")}.one("comment state cast")
             val r=(c[i] as OneRegisterInstruction).registerA
             check(m.calls().any{it.name=="emit"},"not a tree view emitter")
-            m.addInstructions(i+1,"invoke-static/range { v$r .. v$r }, $R->filterCommentState(Ljava/lang/Object;)Ljava/lang/Object;\nmove-result-object v$r\ncheck-cast v$r, Lopa;")
+            m.addInstructions(i+1,"invoke-static/range { v$r .. v$r }, $R->filterCommentState(Ljava/lang/Object;)Ljava/lang/Object;\nmove-result-object v$r\ncheck-cast v$r, ${nativeType("Lopa;")}")
         }
         val main=mutableClassDefBy("Lcom/reddit/launch/main/MainActivity;").methods.filter{it.name=="onCreate"&&it.params()==listOf("Landroid/os/Bundle;")}.one("main onCreate")
         main.addInstructions(0,"invoke-static/range { p0 .. p0 }, $R->initialize(Landroid/content/Context;)V")
-        println("Content filters: validated 2026.47.0 models; Listing, Link, converter, feed processor, 2 comment projections, startup hooked")
+        println("Content filters: validated $version models; Listing, Link, converter, feed processor, 2 comment projections, startup hooked")
     }
     finalize {
         val settings=mutableClassDefByOrNull("Lapp/morphe/extension/reddit/settings/preference/RedditPreferenceFragment;")
