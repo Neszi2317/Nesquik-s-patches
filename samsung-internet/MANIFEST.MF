@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Name: Samsung Internet Local Website Blocker
+Description: Local HTTP(S) rules configured in Morphe
+Version: 0.1.0
+Patcher-Version: 2.5.0
+Author: Nesquik
+License: MPL-2.0
+

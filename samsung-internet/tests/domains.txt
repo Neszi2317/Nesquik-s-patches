@@ -1,0 +1,9 @@
+example.org
+https://example.net/
+example.com/blocked
+www.reddit.com/r/example    /r/second
+*.blocked.test
+query.test/path?x=1
+# ignored line
+127.0.0.1
+[0:0:0:0:0:0:0:1]

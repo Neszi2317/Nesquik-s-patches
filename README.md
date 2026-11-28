@@ -1,6 +1,6 @@
 # Nesquik's patches
 
-Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox**, **Discord** et **Digital Detox**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
+Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox**, **Samsung Internet**, **Discord** et **Digital Detox**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
 
 ## Compatibilité
 
@@ -15,6 +15,7 @@ Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **F
 | YouTube | [Playlist Search & Date Filter](youtube/playlist-date-filter), dont date d’ajout pour « À regarder plus tard » | 21.30.216, 21.47.483 |
 | YouTube | [Traduction automatique des sous-titres 0.4.0](youtube/auto-translated-captions/) | 21.16.256 et 21.46.522 testées par patching |
 | YouTube | Sous-titres arrondis | 21.20.405, 21.44.528, 21.45.82, 21.46.522, 21.47.483 |
+| Samsung Internet | [Local Website Blocker](samsung-internet/) — liste intégrée depuis Morphe | 31.0.2.41, avec SBrowserX 1.3.9 |
 | Firefox | [Blocage local de sites 0.1.3](firefox/) | 159.0, 160.0, 160.0.1 |
 | Discord | [Masquage des utilisateurs bloqués ou ignorés](discord/) | 351.11 - Stable |
 
