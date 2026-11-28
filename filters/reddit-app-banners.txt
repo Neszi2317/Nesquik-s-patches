@@ -1,0 +1,8 @@
+[Adblock Plus 2.0]
+! Title: Reddit Mobile App Banner Fix
+! Version: 20261128.1
+! Expires: 1 day
+! Experimental cosmetic filters for Reddit mobile web
+reddit.com##.configured-xpromo-bottom-sheet
+reddit.com##[id^="configured-xpromo-"]
+reddit.com##body.rpl-scroll-lock:style(overflow: auto !important; position: static !important; height: auto !important;)
