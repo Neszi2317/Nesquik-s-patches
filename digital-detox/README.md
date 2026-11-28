@@ -2,9 +2,11 @@
 
 Patch Morphe indépendant pour Digital Detox 11.42 (592), paquet `com.urbandroid.ddc`. Une case dans la confirmation habituelle permet de lancer la même période de détox sur les appareils associés. Chaque appareil applique sa propre liste d’applications autorisées, ses pénalités et ses réglages de protection. La synchronisation est désactivée par défaut.
 
+La version **0.1.1** (source **0.4.13**) corrige l’ouverture des réglages avec **Clone app**. Pour mettre à jour une installation clonée, conserver le même nom de paquet et la même clé de signature dans Morphe, puis installer l’APK repatché par-dessus la version précédente.
+
 ## Installer sur le Galaxy S24 et la Galaxy Tab S9 FE
 
-1. Sur chaque appareil, actualiser **Nesquik’s patches** dans Morphe Manager, sélectionner l’APK Digital Detox **11.42 (592)** et cocher **Cross-Device Detox Sync**. Autre possibilité, importer le [MPP indépendant](../releases/Cross-Device-Detox-Sync-0.1.0.mpp). Utiliser une seule de ces deux sources pour ce patch.
+1. Sur chaque appareil, actualiser **Nesquik’s patches** dans Morphe Manager, sélectionner l’APK Digital Detox **11.42 (592)** et cocher **Cross-Device Detox Sync**. Autre possibilité, importer le [MPP indépendant](../releases/Cross-Device-Detox-Sync-0.1.1.mpp). Utiliser une seule de ces deux sources pour ce patch.
 2. Installer l’APK produit. Pour une installation officielle existante, la signature de Morphe peut empêcher une mise à jour sur place. Avant de remplacer l’application, attendre la fin de toute session et préserver les données utiles avec les moyens proposés par Digital Detox. La conservation de l’historique et des achats après changement de signature reste à vérifier. Conserver la même clé de signature Morphe pour les mises à jour.
 3. Ouvrir Digital Detox sur les deux appareils. Configurer les protections natives souhaitées, autoriser les notifications et vérifier qu’une détox locale fonctionne.
 4. Installer et ouvrir **ntfy** sur les deux appareils. Dans ses paramètres, utiliser **https://ntfy.sh** comme serveur par défaut et activer **UnifiedPush** si ce réglage est désactivé. Digital Detox crée son abonnement à la première ouverture de sa rubrique de synchronisation.
@@ -59,9 +61,9 @@ Depuis la racine du dépôt, utiliser JDK 21, Bash et Python 3.
 
 ```sh
 python3 tools/fetch-toolchain.py .toolchain
-digital-detox/build.sh "$PWD/.toolchain" "$PWD/releases/Cross-Device-Detox-Sync-0.1.0.mpp"
+digital-detox/build.sh "$PWD/.toolchain" "$PWD/releases/Cross-Device-Detox-Sync-0.1.1.mpp"
 java -jar .toolchain/morphe.jar patch --exclusive \
-  -p releases/Cross-Device-Detox-Sync-0.1.0.mpp -e 'Cross-Device Detox Sync' \
+  -p releases/Cross-Device-Detox-Sync-0.1.1.mpp -e 'Cross-Device Detox Sync' \
   -o digital-detox-patched.apk original.apk
 ```
 

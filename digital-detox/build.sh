@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 tc=$(realpath "${1:?toolchain directory}")
-out=$(realpath -m "${2:-../releases/Cross-Device-Detox-Sync-0.1.0.mpp}")
+out=$(realpath -m "${2:-../releases/Cross-Device-Detox-Sync-0.1.1.mpp}")
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 mkdir -p "$work"/{stubs,runtime,jvm,bundle/extensions,extdex}

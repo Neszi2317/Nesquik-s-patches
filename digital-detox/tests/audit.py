@@ -42,8 +42,9 @@ translations={value for config,value in r.get_resolved_res_configs(title)}
 assert {"Device synchronization","Synchronisation des appareils"} <= translations
 for _, path in r.get_resolved_res_configs(res_id):
     prefs=AXMLPrinter(after.get_file(path)).get_xml_obj()
-    intent=prefs.find(".//*[@"+ns+"key='nesquik_detox_sync']/intent")
-    assert intent.get(ns+"targetClass")=="fr.nesquik.detox.Devices"
+    option, = prefs.findall(".//*[@"+ns+"key='nesquik_detox_sync']")
+    assert option.tag == "fr.nesquik.detox.DevicesPreference"
+    assert option.find("intent") is None, "Settings must resolve the installed package at runtime"
 with ZipFile(original) as a, ZipFile(patched) as b:
     libs = {n for n in a.namelist() if n.startswith("lib/") and not n.endswith("/")}
     assert libs == {n for n in b.namelist() if n.startswith("lib/") and not n.endswith("/")}

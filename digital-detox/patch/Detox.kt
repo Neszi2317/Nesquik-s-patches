@@ -49,10 +49,13 @@ private val syncResources = resourcePatch(default = false) {
                 val prefs=root.getElementsByTagName("Preference")
                 val template=(0 until prefs.length).map { prefs.item(it) as Element }
                     .single { it.getAttributeNS(android,"key")=="category_integration" }
-                val option=template.cloneNode(false) as Element
+                val option = xml.createElement(ext + "DevicesPreference")
+                for (i in 0 until template.attributes.length) {
+                    val attr = template.attributes.item(i)
+                    option.setAttributeNS(attr.namespaceURI, attr.nodeName, attr.nodeValue)
+                }
                 option.setAttributeNS(android,"android:key","nesquik_detox_sync")
                 option.setAttributeNS(android,"android:title","@string/nesquik_detox_sync_title")
-                option.child("intent","targetPackage" to pkg,"targetClass" to ext+"Devices")
                 root.insertBefore(option,template.nextSibling)
             }
         }
