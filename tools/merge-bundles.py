@@ -20,7 +20,7 @@ if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:[-.][a-zA-Z0-9.]+)?", args.versio
 
 manifest = [
     "Manifest-Version: 1.0", "Name: Nesquik's patches", f"Version: {args.version}",
-    "Description: Personal patches for X, Reddit, YouTube, Firefox and Discord",
+    "Description: Personal patches for X, Reddit, YouTube, Firefox, Discord and Digital Detox",
     "Patcher-Version: 2.4.0", "Author: Nesquik", "License: See component licenses", "", ""
 ]
 

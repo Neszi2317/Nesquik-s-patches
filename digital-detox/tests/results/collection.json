@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "outputPath": "collection.apk",
+  "packageName": "com.urbandroid.ddc",
+  "packageVersion": "11.42",
+  "isMount": false,
+  "appliedPatches": [
+    "Cross-Device Detox Sync"
+  ],
+  "failedPatches": [],
+  "stepResults": [
+    {
+      "step": "PATCHING",
+      "success": true
+    },
+    {
+      "step": "REBUILDING",
+      "success": true
+    },
+    {
+      "step": "SIGNING",
+      "success": true
+    }
+  ]
+}

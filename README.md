@@ -1,11 +1,12 @@
 # Nesquik's patches
 
-Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox** et **Discord**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
+Collection personnelle de patchs Morphe pour **X**, **Reddit**, **YouTube**, **Firefox**, **Discord** et **Digital Detox**. Le bundle unique affiche les patchs de l'application et de la version sélectionnées dans Morphe.
 
 ## Compatibilité
 
 | Application | Patchs | Versions déclarées |
 | --- | --- | --- |
+| Digital Detox | [Cross-Device Detox Sync](digital-detox/) — lancement facultatif sur les appareils associés | 11.42 (592) |
 | X | Filtre avancé de mots-clés, masquage des posts sensibles, avatars et bannières, Anonymous Names, flou des médias, masquage permanent par identifiant | 12.43.0-prod.01 |
 | Reddit | Filtre local de mots-clés, masquage NSFW, accueil personnalisé | 2026.47.0, 2026.48.0 |
 | YouTube | Ask Native Action Bar 0.8.5 | 21.20.405, 21.30.216, 21.42.241, 21.44.528, 21.47.483 |

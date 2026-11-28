@@ -1,0 +1,14 @@
+PASS A to B authenticated
+PASS reflection and wrong recipient rejected
+PASS unknown signer rejected
+PASS modified deadline rejected
+PASS expired start rejected
+PASS future command rejected
+PASS unsupported stop
+PASS unsupported shorten
+PASS unsupported extend
+PASS unsupported whitelist
+PASS HTTPS publish via production sender
+PASS offline catch-up and remaining duration
+PASS return ACK over HTTPS
+PASS B to A start over HTTPS

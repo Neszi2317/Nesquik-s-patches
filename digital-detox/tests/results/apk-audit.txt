@@ -1,0 +1,3 @@
+PASS existing manifest, native libraries, bilingual settings routing
+PASS 369 native service, receiver, challenge and settings method listings identical
+PASS five injected calls confined to three original UI methods

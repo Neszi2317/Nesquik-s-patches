@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Name: Cross-Device Detox Sync
+Description: Paired native Digital Detox sessions over UnifiedPush
+Version: 0.1.0
+Patcher-Version: 2.5.0
+Author: Nesquik
+License: GPL-3.0
+
